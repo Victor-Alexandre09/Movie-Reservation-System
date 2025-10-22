@@ -1,4 +1,9 @@
 package Movie_Reservation_System_App.controller.dto.genre;
 
-public class GenreRequestDto {
+import jakarta.validation.constraints.NotBlank;
+
+public record GenreRequestDto(
+        @NotBlank
+        String name
+) {
 }

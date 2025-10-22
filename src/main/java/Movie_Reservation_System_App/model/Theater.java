@@ -1,5 +1,3 @@
-// file: com/seuprojeto/models/Theater.java
-
 package Movie_Reservation_System_App.model;
 
 import jakarta.persistence.*;
@@ -16,7 +14,7 @@ public class Theater {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    private Long id;
 
     @Column(name = "name", nullable = false)
     private String name;

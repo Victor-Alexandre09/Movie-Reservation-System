@@ -1,8 +1,8 @@
-package Movie_Reservation_System_App.controller.dto.genre;
+package Movie_Reservation_System_App.controller.dto.role;
 
 import jakarta.validation.constraints.NotBlank;
 
-public record GenreRequestDto(
+public record RoleRequestDto(
         @NotBlank
         String name
 ) {

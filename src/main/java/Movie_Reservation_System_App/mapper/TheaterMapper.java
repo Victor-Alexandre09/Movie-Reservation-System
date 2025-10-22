@@ -1,21 +1,28 @@
 package Movie_Reservation_System_App.mapper;
 
-import Movie_Reservation_System_App.controller.dto.role.RoleRequestDto;
-import Movie_Reservation_System_App.controller.dto.role.RoleResponseDto;
-import Movie_Reservation_System_App.model.Role;
+import Movie_Reservation_System_App.controller.dto.theater.TheaterRequestDto;
+import Movie_Reservation_System_App.controller.dto.theater.TheaterResponseDto;
+import Movie_Reservation_System_App.controller.dto.theater.TheaterUpdateRequestDto;
+import Movie_Reservation_System_App.model.Theater;
+import org.mapstruct.BeanMapping;
 import org.mapstruct.Mapper;
+import org.mapstruct.MappingTarget;
+import org.mapstruct.NullValuePropertyMappingStrategy;
 import org.mapstruct.factory.Mappers;
 
 import java.util.List;
 
 @Mapper(componentModel = "spring")
-public interface RoleMapper {
+public interface TheaterMapper {
 
-    RoleMapper INSTANCE = Mappers.getMapper(RoleMapper.class);
+    TheaterMapper INSTANCE = Mappers.getMapper(TheaterMapper.class);
 
-    RoleResponseDto toDTO(Role role);
+    TheaterResponseDto toDTO(Theater theater);
 
-    List<RoleResponseDto> toDtoList(List<Role> roles);
+    List<TheaterResponseDto> toDtoList(List<Theater> theaters);
 
-    Role toEntity(RoleRequestDto dto);
+    Theater toEntity(TheaterRequestDto dto);
+
+    @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
+    void updateTheaterFromDto(TheaterUpdateRequestDto dto, @MappingTarget Theater theater);
 }

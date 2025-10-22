@@ -1,50 +1,47 @@
 package Movie_Reservation_System_App.service;
 
-import Movie_Reservation_System_App.controller.dto.genre.GenreRequestDto;
 import Movie_Reservation_System_App.exception.DuplicatedRegisterException;
-import Movie_Reservation_System_App.mapper.GenreMapper;
-import Movie_Reservation_System_App.model.Genre;
-import Movie_Reservation_System_App.repository.GenreRepository;
+import Movie_Reservation_System_App.model.Role;
+import Movie_Reservation_System_App.repository.RoleRepository;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
-public class GenreService {
+public class RoleService {
 
-    GenreRepository genreRepository;
+    RoleRepository roleRepository;
 
-    public GenreService(GenreRepository genreRepository) {
-        this.genreRepository = genreRepository;
+    public RoleService(RoleRepository roleRepository) {
+        this.roleRepository = roleRepository;
     }
 
-    public Genre createGenre(Genre genre) {
-        if (genreRepository.findByName(genre.getName()).isPresent()) {
-            throw new DuplicatedRegisterException("the genre" + genre.getName() + " already exists");
+    public Role createRole(Role role) {
+        if (roleRepository.findByName(role.getName()).isPresent()) {
+            throw new DuplicatedRegisterException("the role " + role.getName() + " already exists");
         }
-        genreRepository.save(genre);
-        return genre;
+        return roleRepository.save(role);
     }
 
-    public Genre getGenre(Long id) {
-        return genreRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("genre not found for id: " + id));
+    public Role getRole(Long id) {
+        return roleRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("role not found for id: " + id));
     }
 
-    public List<Genre> getGenresList() {
-        return genreRepository.findAll();
+    public List<Role> getRolesList() {
+        return roleRepository.findAll();
     }
 
-    public Genre updateGenre(Long id, Genre newGenreData) {
-        Genre genre = getGenre(id);
-        genre.setName(newGenreData.getName());
-        genreRepository.save(genre);
-        return genre;
+    public Role updateRole(Long id, Role newRoleData) {
+        Role role = getRole(id);
+        role.setName(newRoleData.getName());
+        roleRepository.save(role);
+        return role;
     }
 
-    public void deleteGenre(Long id) {
-        Genre genre = getGenre(id);
-        genreRepository.delete(genre);
+    public void deleteRole(Long id) {
+        Role role = getRole(id);
+        roleRepository.delete(role);
     }
 }

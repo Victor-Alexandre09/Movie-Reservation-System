@@ -1,48 +1,51 @@
 package Movie_Reservation_System_App.service;
 
+import Movie_Reservation_System_App.controller.dto.theater.TheaterUpdateRequestDto;
 import Movie_Reservation_System_App.exception.DuplicatedRegisterException;
-import Movie_Reservation_System_App.model.Role;
-import Movie_Reservation_System_App.repository.RoleRepository;
+import Movie_Reservation_System_App.mapper.TheaterMapper;
+import Movie_Reservation_System_App.model.Theater;
+import Movie_Reservation_System_App.repository.TheaterRepository;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
-public class RoleService {
+public class TheaterService {
 
-    RoleRepository roleRepository;
+    TheaterRepository theaterRepository;
+    TheaterMapper theaterMapper;
 
-    public RoleService(RoleRepository roleRepository) {
-        this.roleRepository = roleRepository;
+    public TheaterService(TheaterRepository theaterRepository, TheaterMapper theaterMapper) {
+        this.theaterRepository = theaterRepository;
+        this.theaterMapper = theaterMapper;
     }
 
-    public Role createRole(Role role) {
-        if (roleRepository.findByName(role.getName()).isPresent()) {
-            throw new DuplicatedRegisterException("the role " + role.getName() + " already exists");
+    public Theater createTheater(Theater theater) {
+        if (theaterRepository.findByName(theater.getName()).isPresent()) {
+            throw new DuplicatedRegisterException("the theater " + theater.getName() + " already exists");
         }
-        roleRepository.save(role);
-        return role;
+        return theaterRepository.save(theater);
     }
 
-    public Role getRole(Long id) {
-        return roleRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("role not found for id: " + id));
+    public Theater getTheater(Long id) {
+        return theaterRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("theater not found for id: " + id));
     }
 
-    public List<Role> getRolesList() {
-        return roleRepository.findAll();
+    public List<Theater> getTheatersList() {
+        return theaterRepository.findAll();
     }
 
-    public Role updateRole(Long id, Role newRoleData) {
-        Role role = getRole(id);
-        role.setName(newRoleData.getName());
-        roleRepository.save(role);
-        return role;
+    public Theater updateTheater(Long id, TheaterUpdateRequestDto updateDto) {
+        Theater existingTheader = getTheater(id);
+        theaterMapper.updateTheaterFromDto(updateDto, existingTheader);
+        theaterRepository.save(existingTheader);
+        return existingTheader;
     }
 
-    public void deleteRole(Long id) {
-        Role role = getRole(id);
-        roleRepository.delete(role);
+    public void deleteTheater(Long id) {
+        Theater theater = getTheater(id);
+        theaterRepository.delete(theater);
     }
 }

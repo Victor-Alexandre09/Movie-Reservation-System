@@ -1,16 +1,21 @@
 package Movie_Reservation_System_App.mapper;
 
-import Movie_Reservation_System_App.controller.dto.movie.MovieDto;
-import Movie_Reservation_System_App.model.Movie;
+import Movie_Reservation_System_App.controller.dto.genre.GenreRequestDto;
+import Movie_Reservation_System_App.controller.dto.genre.GenreResponseDto;
+import Movie_Reservation_System_App.model.Genre;
 import org.mapstruct.Mapper;
 import org.mapstruct.factory.Mappers;
 
+import java.util.List;
+
 @Mapper(componentModel = "spring")
-public interface MovieMapper {
+public interface GenreMapper {
 
-    MovieMapper INSTANCE = Mappers.getMapper(MovieMapper.class);
+    GenreMapper INSTANCE = Mappers.getMapper(GenreMapper.class);
 
-    MovieDto toDTO(Movie movie);
+    GenreResponseDto toDTO(Genre genre);
 
-    Movie toEntity(MovieDto dto);
+    List<GenreResponseDto> toDtoList(List<Genre> genres);
+
+    Genre toEntity(GenreRequestDto dto);
 }

@@ -26,7 +26,7 @@ public class User {
     private String email;
 
     @Column(name = "password", nullable = false)
-    private String password; // Lembre-se de armazenar a senha como um hash!
+    private String password;
 
     @Column(name = "created_at", updatable = false, columnDefinition = "TIMESTAMP WITH TIME ZONE")
     private OffsetDateTime createdAt = OffsetDateTime.now();

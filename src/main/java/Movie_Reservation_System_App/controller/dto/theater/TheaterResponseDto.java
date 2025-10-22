@@ -1,7 +1,8 @@
-package Movie_Reservation_System_App.controller.dto.role;
+package Movie_Reservation_System_App.controller.dto.theater;
 
-public record RoleResponseDto(
+public record TheaterResponseDto(
         Long id,
-        String name
+        String name,
+        Integer capacity
 ) {
 }

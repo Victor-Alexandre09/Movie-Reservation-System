@@ -1,9 +1,12 @@
-package Movie_Reservation_System_App.controller.dto.role;
+package Movie_Reservation_System_App.controller.dto.theater;
 
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 
-public record RoleRequestDto(
+public record TheaterRequestDto(
         @NotBlank
-        String name
+        String name,
+        @NotNull
+        Integer capacity
 ) {
 }

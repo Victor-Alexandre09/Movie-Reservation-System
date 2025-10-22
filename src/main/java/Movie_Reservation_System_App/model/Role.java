@@ -1,5 +1,3 @@
-// file: com/seuprojeto/models/Role.java
-
 package Movie_Reservation_System_App.model;
 
 import jakarta.persistence.*;
@@ -16,7 +14,7 @@ public class Role {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    private Long id;
 
     @Column(name = "name", nullable = false, unique = true, length = 50)
     private String name;
