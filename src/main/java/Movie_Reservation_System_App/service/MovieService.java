@@ -48,10 +48,10 @@ public GenreService genreService;
     }
 
     public Movie updateMovie(Long id, MovieUpdateRequestDto updateDto) {
-        Movie existingTheader = getMovie(id);
-        movieMapper.updateMovieFromDto(updateDto, existingTheader);
-        movieRepository.save(existingTheader);
-        return existingTheader;
+        Movie existingMovie = getMovie(id);
+        movieMapper.updateMovieFromDto(updateDto, existingMovie);
+        movieRepository.save(existingMovie);
+        return existingMovie;
     }
 
     public void deleteMovie(Long id) {

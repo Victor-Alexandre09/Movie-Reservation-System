@@ -36,8 +36,7 @@ public class RoleService {
     public Role updateRole(Long id, Role newRoleData) {
         Role role = getRole(id);
         role.setName(newRoleData.getName());
-        roleRepository.save(role);
-        return role;
+        return roleRepository.save(role);
     }
 
     public void deleteRole(Long id) {

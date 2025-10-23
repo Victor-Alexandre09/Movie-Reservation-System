@@ -40,8 +40,7 @@ public class TheaterService {
     public Theater updateTheater(Long id, TheaterUpdateRequestDto updateDto) {
         Theater existingTheader = getTheater(id);
         theaterMapper.updateTheaterFromDto(updateDto, existingTheader);
-        theaterRepository.save(existingTheader);
-        return existingTheader;
+        return theaterRepository.save(existingTheader);
     }
 
     public void deleteTheater(Long id) {
