@@ -102,6 +102,35 @@ class RoleServiceTest {
     }
 
     @Test
+    void testGetRoleByname_WhenRoleExists_ShouldReturnRole() {
+        Role existingRole = new Role();
+        existingRole.setId(1L);
+        existingRole.setName("ROLE_USER");
+
+        when(roleRepository.findByName("ROLE_USER")).thenReturn(Optional.of(existingRole));
+
+        Role foundRole = roleService.getRoleByName("ROLE_USER");
+
+        assertNotNull(foundRole);
+        assertEquals(1L, foundRole.getId());
+        verify(roleRepository).findByName("ROLE_USER");
+    }
+
+    @Test
+    void testGetRoleByname_WhenRoleDoesNotExist_ShouldThrowEntityNotFoundException() {
+        String roleName = "NON_EXISTING_ROLE";
+        when(roleRepository.findByName(roleName)).thenReturn(Optional.empty());
+
+        EntityNotFoundException exception = assertThrows(
+                EntityNotFoundException.class,
+                () -> roleService.getRoleByName(roleName)
+        );
+
+        assertEquals("role not found for name: " + roleName, exception.getMessage());
+        verify(roleRepository).findByName(roleName);
+    }
+
+    @Test
     void testGetRolesList_WhenRolesExist_ShouldReturnListOfRoles() {
         Role role1 = new Role();
         role1.setId(1L);

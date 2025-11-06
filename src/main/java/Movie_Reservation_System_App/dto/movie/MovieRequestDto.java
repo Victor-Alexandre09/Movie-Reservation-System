@@ -1,4 +1,4 @@
-package Movie_Reservation_System_App.controller.dto.movie;
+package Movie_Reservation_System_App.dto.movie;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;

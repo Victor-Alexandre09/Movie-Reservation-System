@@ -1,6 +1,6 @@
 package Movie_Reservation_System_App.service;
 
-import Movie_Reservation_System_App.controller.dto.theater.TheaterUpdateRequestDto;
+import Movie_Reservation_System_App.dto.theater.TheaterUpdateRequestDto;
 import Movie_Reservation_System_App.exception.DuplicatedRegisterException;
 import Movie_Reservation_System_App.mapper.TheaterMapper;
 import Movie_Reservation_System_App.model.Theater;

@@ -1,7 +1,7 @@
 package Movie_Reservation_System_App.mapper;
 
-import Movie_Reservation_System_App.controller.dto.genre.GenreRequestDto;
-import Movie_Reservation_System_App.controller.dto.genre.GenreResponseDto;
+import Movie_Reservation_System_App.dto.genre.GenreRequestDto;
+import Movie_Reservation_System_App.dto.genre.GenreResponseDto;
 import Movie_Reservation_System_App.model.Genre;
 import org.mapstruct.Mapper;
 import org.mapstruct.factory.Mappers;

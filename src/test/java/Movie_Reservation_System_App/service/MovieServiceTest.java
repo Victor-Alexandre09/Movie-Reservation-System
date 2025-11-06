@@ -1,7 +1,7 @@
 package Movie_Reservation_System_App.service;
 
-import Movie_Reservation_System_App.controller.dto.movie.MovieRequestDto;
-import Movie_Reservation_System_App.controller.dto.movie.MovieUpdateRequestDto;
+import Movie_Reservation_System_App.dto.movie.MovieRequestDto;
+import Movie_Reservation_System_App.dto.movie.MovieUpdateRequestDto;
 import Movie_Reservation_System_App.exception.DuplicatedRegisterException;
 import Movie_Reservation_System_App.mapper.MovieMapper;
 import Movie_Reservation_System_App.model.Genre;
@@ -80,7 +80,7 @@ class MovieServiceTest {
         when(movieMapper.toEntity(movieDto)).thenReturn(movieToSave);
         when(movieRepository.save(movieToSave)).thenReturn(savedMovie);
 
-        Movie createdMovie = movieService.create(movieDto);
+        Movie createdMovie = movieService.createMovie(movieDto);
 
         assertNotNull(createdMovie);
         assertEquals(1L, createdMovie.getId());
@@ -105,7 +105,7 @@ class MovieServiceTest {
 
         DuplicatedRegisterException exception = assertThrows(
                 DuplicatedRegisterException.class,
-                () -> movieService.create(movieDto)
+                () -> movieService.createMovie(movieDto)
         );
 
         assertEquals("the movie Inception already exists", exception.getMessage());

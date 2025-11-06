@@ -1,7 +1,7 @@
 package Movie_Reservation_System_App.mapper;
 
-import Movie_Reservation_System_App.controller.dto.role.RoleRequestDto;
-import Movie_Reservation_System_App.controller.dto.role.RoleResponseDto;
+import Movie_Reservation_System_App.dto.role.RoleRequestDto;
+import Movie_Reservation_System_App.dto.role.RoleResponseDto;
 import Movie_Reservation_System_App.model.Role;
 import org.mapstruct.Mapper;
 import org.mapstruct.factory.Mappers;

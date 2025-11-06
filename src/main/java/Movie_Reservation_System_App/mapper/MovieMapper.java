@@ -1,8 +1,8 @@
 package Movie_Reservation_System_App.mapper;
 
-import Movie_Reservation_System_App.controller.dto.movie.MovieRequestDto;
-import Movie_Reservation_System_App.controller.dto.movie.MovieResponseDto;
-import Movie_Reservation_System_App.controller.dto.movie.MovieUpdateRequestDto;
+import Movie_Reservation_System_App.dto.movie.MovieRequestDto;
+import Movie_Reservation_System_App.dto.movie.MovieResponseDto;
+import Movie_Reservation_System_App.dto.movie.MovieUpdateRequestDto;
 import Movie_Reservation_System_App.model.Movie;
 import org.mapstruct.BeanMapping;
 import org.mapstruct.Mapper;

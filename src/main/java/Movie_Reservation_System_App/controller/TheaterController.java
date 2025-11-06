@@ -1,8 +1,8 @@
 package Movie_Reservation_System_App.controller;
 
-import Movie_Reservation_System_App.controller.dto.theater.TheaterRequestDto;
-import Movie_Reservation_System_App.controller.dto.theater.TheaterResponseDto;
-import Movie_Reservation_System_App.controller.dto.theater.TheaterUpdateRequestDto;
+import Movie_Reservation_System_App.dto.theater.TheaterRequestDto;
+import Movie_Reservation_System_App.dto.theater.TheaterResponseDto;
+import Movie_Reservation_System_App.dto.theater.TheaterUpdateRequestDto;
 import Movie_Reservation_System_App.mapper.TheaterMapper;
 import Movie_Reservation_System_App.model.Theater;
 import Movie_Reservation_System_App.service.TheaterService;

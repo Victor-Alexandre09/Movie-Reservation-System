@@ -1,11 +1,10 @@
 package Movie_Reservation_System_App.controller;
 
-import Movie_Reservation_System_App.controller.dto.movie.MovieRequestDto;
-import Movie_Reservation_System_App.controller.dto.movie.MovieResponseDto;
-import Movie_Reservation_System_App.controller.dto.movie.MovieUpdateRequestDto;
+import Movie_Reservation_System_App.dto.movie.MovieRequestDto;
+import Movie_Reservation_System_App.dto.movie.MovieResponseDto;
+import Movie_Reservation_System_App.dto.movie.MovieUpdateRequestDto;
 import Movie_Reservation_System_App.mapper.MovieMapper;
 import Movie_Reservation_System_App.model.Movie;
-import Movie_Reservation_System_App.service.GenreService;
 import Movie_Reservation_System_App.service.MovieService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -20,17 +19,15 @@ import java.util.List;
 public class MovieController {
     public MovieService movieService;
     public MovieMapper movieMapper;
-    public GenreService genreService;
 
-    public MovieController(MovieService movieService, MovieMapper movieMapper, GenreService genreService) {
+    public MovieController(MovieService movieService, MovieMapper movieMapper) {
         this.movieService = movieService;
         this.movieMapper = movieMapper;
-        this.genreService = genreService;
     }
 
     @PostMapping
     public ResponseEntity<MovieResponseDto> createMovie(@RequestBody @Validated MovieRequestDto movieRequestDto) {
-        Movie createdMovie = movieService.create(movieRequestDto);
+        Movie createdMovie = movieService.createMovie(movieRequestDto);
 
         URI location = ServletUriComponentsBuilder
                 .fromCurrentRequest()

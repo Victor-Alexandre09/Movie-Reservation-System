@@ -1,4 +1,4 @@
-package Movie_Reservation_System_App.controller.dto.movie;
+package Movie_Reservation_System_App.dto.movie;
 
 import java.time.LocalDate;
 import java.util.Set;

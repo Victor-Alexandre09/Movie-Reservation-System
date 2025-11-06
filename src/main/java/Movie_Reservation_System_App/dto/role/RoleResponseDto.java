@@ -1,4 +1,4 @@
-package Movie_Reservation_System_App.controller.dto.role;
+package Movie_Reservation_System_App.dto.role;
 
 public record RoleResponseDto(
         Long id,

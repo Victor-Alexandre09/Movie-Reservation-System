@@ -1,6 +1,6 @@
-package Movie_Reservation_System_App.controller.dto.movie;
+package Movie_Reservation_System_App.dto.movie;
 
-import Movie_Reservation_System_App.controller.dto.genre.GenreResponseDto;
+import Movie_Reservation_System_App.dto.genre.GenreResponseDto;
 
 import java.time.LocalDate;
 import java.util.Set;
