@@ -44,4 +44,9 @@ public class GlobalExceptionHandler {
     public Map<String, String> handleBusinessValidation(ValidationException ex) {
         return ex.getErrors();
     }
+
+    @ExceptionHandler(TheatherNotAvaliableException.class)
+    public ResponseEntity<String> handleTheaterNotAvaliableException(TheatherNotAvaliableException ex) {
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(ex.getMessage());
+    }
 }

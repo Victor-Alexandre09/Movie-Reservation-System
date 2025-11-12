@@ -21,6 +21,9 @@ public class ShowTime {
     @Column(name = "start_time", nullable = false)
     private OffsetDateTime startTime;
 
+    @Column(name = "end_time", nullable = false)
+    private OffsetDateTime endTime;
+
     @Column(name = "price", nullable = false, precision = 10, scale = 2)
     private BigDecimal price;
 
