@@ -7,6 +7,7 @@ import Movie_Reservation_System_App.mapper.MovieMapper;
 import Movie_Reservation_System_App.model.Movie;
 import Movie_Reservation_System_App.service.MovieService;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -26,6 +27,7 @@ public class MovieController {
     }
 
     @PostMapping
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<MovieResponseDto> createMovie(@RequestBody @Validated MovieRequestDto movieRequestDto) {
         Movie createdMovie = movieService.createMovie(movieRequestDto);
 
@@ -50,6 +52,7 @@ public class MovieController {
     }
 
     @PutMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<MovieResponseDto> updateMovie(@RequestBody MovieUpdateRequestDto data,
                                                             @PathVariable Long id) {
         Movie updatedMovie = movieService.updateMovie(id, data);
@@ -57,6 +60,7 @@ public class MovieController {
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Void> deleteMovie(@PathVariable Long id) {
         movieService.deleteMovie(id);
         return ResponseEntity.noContent().build();

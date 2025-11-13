@@ -7,6 +7,7 @@ import Movie_Reservation_System_App.mapper.ShowTimeMapper;
 import Movie_Reservation_System_App.model.ShowTime;
 import Movie_Reservation_System_App.service.ShowTimeService;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -27,7 +28,7 @@ public class ShowTimeController {
     }
 
     @PostMapping
-    public ResponseEntity<ShowTimeResponseDto> createMovie(@RequestBody @Validated ShowTimeRequestDto showTimeRequestDto) {
+    public ResponseEntity<ShowTimeResponseDto> createShowTime(@RequestBody @Validated ShowTimeRequestDto showTimeRequestDto) {
         ShowTime createdShowTime = showTimeService.createShowTime(showTimeRequestDto);
 
         URI location = ServletUriComponentsBuilder
@@ -50,6 +51,7 @@ public class ShowTimeController {
     }
 
     @PutMapping("{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ShowTimeResponseDto> updateShowTime(@PathVariable Long id,
                                                               @RequestBody ShowTimeUpdateRequestDto updateRequestDto) {
         ShowTime updatedShowTime = showTimeService.updateShowTime(id, updateRequestDto);
@@ -57,6 +59,7 @@ public class ShowTimeController {
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Void> deleteShowTime(@PathVariable Long id) {
         showTimeService.deleteShowTime(id);
         return ResponseEntity.noContent().build();

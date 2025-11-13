@@ -7,6 +7,8 @@ import Movie_Reservation_System_App.mapper.UserMapper;
 import Movie_Reservation_System_App.model.User;
 import Movie_Reservation_System_App.service.UserService;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -41,18 +43,22 @@ public class UserController {
     }
 
     @GetMapping("/{id}")
+    @PreAuthorize("principal.id == #id or hasRole('ADMIN')")
     public ResponseEntity<UserResponseDto> getUser(@PathVariable Long id) {
+        System.out.println(SecurityContextHolder.getContext().getAuthentication().getPrincipal());
         User user = userService.getUser(id);
         return ResponseEntity.ok().body(userMapper.toDTO(user));
     }
 
     @GetMapping
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<List<UserResponseDto>> getUsersList() {
         List<User> users = userService.getUsersList();
         return ResponseEntity.ok().body(userMapper.toDtoList(users));
     }
 
     @PutMapping("/{id}")
+    @PreAuthorize("principal.id == #id or hasRole('ADMIN')")
     public ResponseEntity<UserResponseDto> updateUser(@PathVariable Long id,
                                                       @RequestBody UserUpdateRequestDto userUpdateRequestDto) {
         User updatedUser = userService.updateUser(id, userUpdateRequestDto);
@@ -60,6 +66,7 @@ public class UserController {
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("principal.id == #id or hasRole('ADMIN')")
     public ResponseEntity<Void> deleteUser(@PathVariable Long id) {
         userService.deleteUser(id);
         return ResponseEntity.noContent().build();

@@ -6,6 +6,7 @@ import Movie_Reservation_System_App.mapper.RoleMapper;
 import Movie_Reservation_System_App.model.Role;
 import Movie_Reservation_System_App.service.RoleService;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -15,6 +16,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/roles")
+@PreAuthorize("hasRole('ADMIN')")
 public class RoleController {
 
     RoleService roleService;

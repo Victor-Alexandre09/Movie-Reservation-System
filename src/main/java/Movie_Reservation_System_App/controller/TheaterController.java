@@ -7,6 +7,7 @@ import Movie_Reservation_System_App.mapper.TheaterMapper;
 import Movie_Reservation_System_App.model.Theater;
 import Movie_Reservation_System_App.service.TheaterService;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -27,6 +28,7 @@ public class TheaterController {
     }
 
     @PostMapping
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<TheaterResponseDto> createTheater(@RequestBody @Validated TheaterRequestDto data) {
         Theater theater = theaterMapper.toEntity(data);
         Theater createdTheater = theaterService.createTheater(theater);
@@ -52,6 +54,7 @@ public class TheaterController {
     }
 
     @PutMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<TheaterResponseDto> updateTheater(@RequestBody TheaterUpdateRequestDto data,
                                                             @PathVariable Long id) {
         Theater theater = theaterService.updateTheater(id, data);
@@ -59,6 +62,7 @@ public class TheaterController {
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Void> deleteTheater(@PathVariable Long id) {
         theaterService.deleteTheater(id);
         return ResponseEntity.noContent().build();

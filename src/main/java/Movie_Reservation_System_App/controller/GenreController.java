@@ -6,6 +6,7 @@ import Movie_Reservation_System_App.mapper.GenreMapper;
 import Movie_Reservation_System_App.model.Genre;
 import Movie_Reservation_System_App.service.GenreService;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -26,6 +27,7 @@ public class GenreController {
     }
 
     @PostMapping
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<GenreResponseDto> createGenre(@RequestBody @Validated GenreRequestDto data) {
         Genre genre = genreMapper.toEntity(data);
         Genre createdGenre = genreService.createGenre(genre);
@@ -51,6 +53,7 @@ public class GenreController {
     }
 
     @PutMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<GenreResponseDto> updateGenre(@RequestBody @Validated GenreRequestDto data,
                                                         @PathVariable Long id) {
         Genre newGenreData = genreMapper.toEntity(data);
@@ -59,6 +62,7 @@ public class GenreController {
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Void> deleteGenre(@PathVariable Long id) {
         genreService.deleteGenre(id);
         return ResponseEntity.noContent().build();
