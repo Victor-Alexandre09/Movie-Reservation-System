@@ -1,6 +1,7 @@
 package Movie_Reservation_System_App.security;
 
 import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.security.SignatureException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -56,6 +57,9 @@ public class JwtAuthFilter extends OncePerRequestFilter {
         } catch (ExpiredJwtException ex) {
             response.setStatus(401);
             response.getWriter().write("expired token");
+        } catch (MalformedJwtException ex) {
+            response.setStatus(401);
+            response.getWriter().write("malformed token");
         }
     }
 }

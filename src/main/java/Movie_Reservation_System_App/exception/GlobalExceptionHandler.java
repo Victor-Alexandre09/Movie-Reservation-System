@@ -45,8 +45,8 @@ public class GlobalExceptionHandler {
         return ex.getErrors();
     }
 
-    @ExceptionHandler(TheatherNotAvaliableException.class)
-    public ResponseEntity<String> handleTheaterNotAvaliableException(TheatherNotAvaliableException ex) {
+    @ExceptionHandler(TheaterNotAvaliableException.class)
+    public ResponseEntity<String> handleTheaterNotAvaliableException(TheaterNotAvaliableException ex) {
         return ResponseEntity.status(HttpStatus.CONFLICT).body(ex.getMessage());
     }
 }

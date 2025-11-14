@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.BatchSize;
 
 import java.time.LocalDate;
 import java.util.HashSet;
@@ -38,5 +39,6 @@ public class Movie {
         joinColumns = @JoinColumn(name = "movie_id"),
         inverseJoinColumns = @JoinColumn(name = "genres_id")
     )
+    @BatchSize(size = 100)
     private Set<Genre> genres = new HashSet<>();
 }

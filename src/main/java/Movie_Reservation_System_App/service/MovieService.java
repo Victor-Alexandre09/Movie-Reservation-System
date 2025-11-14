@@ -50,6 +50,8 @@ public GenreService genreService;
     public Movie updateMovie(Long id, MovieUpdateRequestDto updateDto) {
         Movie existingMovie = getMovie(id);
         movieMapper.updateMovieFromDto(updateDto, existingMovie);
+        Set<Genre> newGenres = genreService.foundGenresById(updateDto.genresId());
+        existingMovie.setGenres(newGenres);
         movieRepository.save(existingMovie);
         return existingMovie;
     }

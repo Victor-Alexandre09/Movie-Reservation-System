@@ -2,20 +2,21 @@ package Movie_Reservation_System_App.service;
 
 import Movie_Reservation_System_App.dto.showTime.ShowTimeRequestDto;
 import Movie_Reservation_System_App.dto.showTime.ShowTimeUpdateRequestDto;
-import Movie_Reservation_System_App.exception.TheatherNotAvaliableException;
+import Movie_Reservation_System_App.exception.TheaterNotAvaliableException;
 import Movie_Reservation_System_App.mapper.ShowTimeMapper;
 import Movie_Reservation_System_App.model.Movie;
 import Movie_Reservation_System_App.model.ShowTime;
 import Movie_Reservation_System_App.model.Theater;
 import Movie_Reservation_System_App.repository.ShowTimeRepository;
 import jakarta.persistence.EntityNotFoundException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -43,7 +44,7 @@ public class ShowTimeService {
 
         OffsetDateTime newShowEndTime = getEndTimeOfShow(showTimeDto.startTime(), movie.getDurationMinutes());
 
-        isTheaterAvalibleForNewShow(theater.getId(), showTimeDto.startTime(), newShowEndTime);
+        validateTheaterAvaliabilitiyForNewShow(theater.getId(), showTimeDto.startTime(), newShowEndTime);
 
         ShowTime showTime = new ShowTime();
         showTime.setPrice(showTimeDto.price());
@@ -60,8 +61,21 @@ public class ShowTimeService {
                 .orElseThrow( () -> new EntityNotFoundException("ShowTime not found by id: " + id));
     }
 
-    public List<ShowTime> getShowTimeList() {
-        return showTimeRepository.findAll();
+    public Page<ShowTime> getShowTimeList(Pageable pageable) {
+        return showTimeRepository.findAll(pageable);
+    }
+
+    public Page<ShowTime> getShowTimesByMovieId(Long movieId, Pageable pageable) {
+        movieService.getMovie(movieId);
+
+        return showTimeRepository.findFutureShowsByMovieId(movieId, pageable);
+    }
+
+    public Page<ShowTime> getShowTimesByDate(OffsetDateTime date, Pageable pageable) {
+        OffsetDateTime startOfDay = date
+                .toLocalDate().atStartOfDay(date.getOffset()).toOffsetDateTime();
+        OffsetDateTime endOfDay = startOfDay.plusDays(1);
+        return showTimeRepository.findShowTimesByDate(startOfDay, endOfDay, pageable);
     }
 
     @Transactional
@@ -84,7 +98,7 @@ public class ShowTimeService {
         OffsetDateTime newEndTime = getEndTimeOfShow(show.getStartTime(), show.getMovie().getDurationMinutes());
         show.setEndTime(newEndTime);
 
-        isTheaterAvalibleForNewShow(
+        validateTheaterAvaliabilitiyForNewShow(
                 show.getTheater().getId(),
                 show.getStartTime(),
                 show.getEndTime(),
@@ -98,16 +112,17 @@ public class ShowTimeService {
         showTimeRepository.delete(getShowTime(id));
     }
 
-    private void isTheaterAvalibleForNewShow(Long theatherId, OffsetDateTime newShowStartTime, OffsetDateTime newShowEndTime) {
-        this.isTheaterAvalibleForNewShow(theatherId, newShowStartTime, newShowEndTime, 0L);
+    private void validateTheaterAvaliabilitiyForNewShow(Long theatherId, OffsetDateTime newShowStartTime, OffsetDateTime newShowEndTime) {
+        this.validateTheaterAvaliabilitiyForNewShow
+                (theatherId, newShowStartTime, newShowEndTime, 0L);
     }
 
-    private void isTheaterAvalibleForNewShow(Long theatherId, OffsetDateTime newShowStartTime, OffsetDateTime newShowEndTime, Long showTimeIdToExclude) {
+    private void validateTheaterAvaliabilitiyForNewShow(Long theatherId, OffsetDateTime newShowStartTime, OffsetDateTime newShowEndTime, Long showTimeIdToExclude) {
 
-        Optional<List<ShowTime>> conflictingShows = showTimeRepository.findConflictingShows(theatherId, newShowStartTime, newShowEndTime, showTimeIdToExclude);
+        List<ShowTime> conflictingShows = showTimeRepository.findConflictingShows(theatherId, newShowStartTime, newShowEndTime, showTimeIdToExclude);
 
-        if (conflictingShows.isPresent() && !conflictingShows.get().isEmpty() ) {
-            String details = conflictingShows.get()
+        if (!conflictingShows.isEmpty()) {
+            String details = conflictingShows
                     .stream()
                     .map(s -> String.format("ID %d TheatherID %d (%s → %s)",
                             s.getId(),
@@ -116,7 +131,7 @@ public class ShowTimeService {
                             s.getEndTime()))
                     .collect(Collectors.joining("\n"));
 
-            throw new TheatherNotAvaliableException(
+            throw new TheaterNotAvaliableException(
                     "The new show time conflicts with existing show times:\n" + details);
         }
     }

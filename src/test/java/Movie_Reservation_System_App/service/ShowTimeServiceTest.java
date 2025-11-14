@@ -2,7 +2,7 @@ package Movie_Reservation_System_App.service;
 
 import Movie_Reservation_System_App.dto.showTime.ShowTimeRequestDto;
 import Movie_Reservation_System_App.dto.showTime.ShowTimeUpdateRequestDto;
-import Movie_Reservation_System_App.exception.TheatherNotAvaliableException;
+import Movie_Reservation_System_App.exception.TheaterNotAvaliableException;
 import Movie_Reservation_System_App.mapper.ShowTimeMapper;
 import Movie_Reservation_System_App.model.Movie;
 import Movie_Reservation_System_App.model.ShowTime;
@@ -10,15 +10,21 @@ import Movie_Reservation_System_App.model.Theater;
 import Movie_Reservation_System_App.repository.ShowTimeRepository;
 import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -26,8 +32,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class ShowTimeServiceTest {
@@ -95,7 +100,7 @@ class ShowTimeServiceTest {
 
         // No conflicts found (excludeId = 0L)
         given(showTimeRepository.findConflictingShows(eq(1L), eq(startTime), eq(endTime), eq(0L)))
-                .willReturn(Optional.empty());
+                .willReturn(List.of());
 
         // Mock the save operation
         given(showTimeRepository.save(any(ShowTime.class))).willAnswer(invocation -> {
@@ -128,11 +133,11 @@ class ShowTimeServiceTest {
 
         // Simulate finding a conflicting show
         given(showTimeRepository.findConflictingShows(eq(1L), eq(startTime), eq(endTime), eq(0L)))
-                .willReturn(Optional.of(List.of(testShowTime)));
+                .willReturn((List.of(testShowTime)));
 
         // When & Then
-        TheatherNotAvaliableException exception = assertThrows(
-                TheatherNotAvaliableException.class,
+        TheaterNotAvaliableException exception = assertThrows(
+                TheaterNotAvaliableException.class,
                 () -> showTimeService.createShowTime(requestDto)
         );
 
@@ -188,18 +193,160 @@ class ShowTimeServiceTest {
     // --- getShowTimeList Tests ---
 
     @Test
-    void getShowTimeList_Success() {
-        // Given
-        given(showTimeRepository.findAll()).willReturn(List.of(testShowTime));
+    @DisplayName("Should return a paged list of all ShowTimes")
+    void getShowTimeList_Pageable_Success() {
+        // Arrange
+        // Create a Pageable request for the first page with 10 items
+        Pageable pageable = PageRequest.of(0, 10);
 
-        // When
-        List<ShowTime> results = showTimeService.getShowTimeList();
+        // Create a mock list and Page to be returned by the repository
+        List<ShowTime> showTimeList = List.of(testShowTime);
+        Page<ShowTime> mockPage = new PageImpl<>(showTimeList, pageable, showTimeList.size());
 
-        // Then
-        assertNotNull(results);
-        assertFalse(results.isEmpty());
-        assertEquals(1, results.size());
-        assertEquals(testShowTime, results.get(0));
+        // Mock the repository call
+        when(showTimeRepository.findAll(pageable)).thenReturn(mockPage);
+
+        // Act
+        // Call the service method
+        Page<ShowTime> result = showTimeService.getShowTimeList(pageable);
+
+        // Assert
+        // Check that the result is not null and contains the expected data
+        assertNotNull(result);
+        assertEquals(1, result.getTotalElements());
+        assertEquals(1, result.getContent().size());
+        assertEquals(testShowTime.getId(), result.getContent().get(0).getId());
+
+        // Verify that the repository method was called exactly once with the correct Pageable
+        verify(showTimeRepository, times(1)).findAll(pageable);
+    }
+
+    // --- getShowTimesByMovieId Tests ---
+
+    /**
+     * Tests finding show times by a specific movie ID.
+     * Verifies that the MovieService is checked first, and then
+     * the repository is called with the correct movie ID.
+     */
+    @Test
+    @DisplayName("Should return future ShowTimes for a specific movie ID")
+    void getShowTimesByMovieId_Success() {
+        // Arrange
+        Long movieId = testMovie.getId();
+        Pageable pageable = PageRequest.of(0, 5);
+        Page<ShowTime> mockPage = new PageImpl<>(List.of(testShowTime), pageable, 1);
+
+        // 1. Mock the movie service check (to confirm the movie exists)
+        when(movieService.getMovie(movieId)).thenReturn(testMovie);
+
+        // 2. Mock the repository find method
+        when(showTimeRepository.findFutureShowsByMovieId(movieId, pageable)).thenReturn(mockPage);
+
+        // Act
+        Page<ShowTime> result = showTimeService.getShowTimesByMovieId(movieId, pageable);
+
+        // Assert
+        assertNotNull(result);
+        assertEquals(1, result.getTotalElements());
+        // Verify both service and repository were called correctly
+        verify(movieService, times(1)).getMovie(movieId);
+        verify(showTimeRepository, times(1)).findFutureShowsByMovieId(movieId, pageable);
+    }
+
+    /**
+     * Tests the case where show times are requested for a movie ID that does not exist.
+     * Verifies that an EntityNotFoundException is thrown and the repository is never queried.
+     */
+    @Test
+    @DisplayName("Should throw EntityNotFoundException if movie ID is invalid")
+    void getShowTimesByMovieId_MovieNotFound() {
+        // Arrange
+        Long nonExistentMovieId = 99L;
+        Pageable pageable = PageRequest.of(0, 5);
+
+        // Mock the movie service to throw an exception
+        when(movieService.getMovie(nonExistentMovieId))
+                .thenThrow(new EntityNotFoundException("Movie not found"));
+
+        // Act & Assert
+        // Check that the correct exception is thrown
+        assertThrows(EntityNotFoundException.class, () -> {
+            showTimeService.getShowTimesByMovieId(nonExistentMovieId, pageable);
+        });
+
+        // Verify that the repository was NOT called, because the movie check failed first
+        verify(showTimeRepository, never()).findFutureShowsByMovieId(anyLong(), any(Pageable.class));
+    }
+
+    // --- getShowTimesByDate Tests ---
+
+    /**
+     * Tests finding show times by a specific date.
+     * Verifies that the start-of-day and end-of-day are calculated correctly
+     * and passed to the repository.
+     */
+    @Test
+    @DisplayName("Should return ShowTimes for a specific date (UTC)")
+    void getShowTimesByDate_Success_UTC() {
+        // Arrange
+        Pageable pageable = PageRequest.of(0, 10);
+        // The testShowTime startTime is "2025-01-01T10:00:00Z"
+        OffsetDateTime inputDate = OffsetDateTime.parse("2025-01-01T14:30:00Z");
+
+        // Define the expected start and end boundaries for the query
+        OffsetDateTime expectedStart = OffsetDateTime.parse("2025-01-01T00:00:00Z");
+        OffsetDateTime expectedEnd = OffsetDateTime.parse("2025-01-02T00:00:00Z");
+
+        Page<ShowTime> mockPage = new PageImpl<>(List.of(testShowTime), pageable, 1);
+
+        // Mock the repository call with the expected calculated dates
+        when(showTimeRepository.findShowTimesByDate(expectedStart, expectedEnd, pageable))
+                .thenReturn(mockPage);
+
+        // Act
+        Page<ShowTime> result = showTimeService.getShowTimesByDate(inputDate, pageable);
+
+        // Assert
+        assertNotNull(result);
+        assertEquals(1, result.getTotalElements());
+
+        // Verify the repository was called with the correctly calculated date boundaries
+        verify(showTimeRepository, times(1))
+                .findShowTimesByDate(expectedStart, expectedEnd, pageable);
+    }
+
+    /**
+     * Tests finding show times by date, specifically checking that the
+     * offset from the input date is correctly preserved for the day boundaries.
+     */
+    @Test
+    @DisplayName("Should return ShowTimes for a specific date, honoring the offset")
+    void getShowTimesByDate_Success_WithOffset() {
+        // Arrange
+        Pageable pageable = PageRequest.of(0, 10);
+        // Use a non-UTC offset
+        OffsetDateTime inputDate = OffsetDateTime.parse("2025-01-01T02:30:00-05:00");
+
+        // Define the expected boundaries, which MUST carry the same offset
+        OffsetDateTime expectedStart = OffsetDateTime.parse("2025-01-01T00:00:00-05:00");
+        OffsetDateTime expectedEnd = OffsetDateTime.parse("2025-01-02T00:00:00-05:00");
+
+        Page<ShowTime> mockPage = new PageImpl<>(Collections.emptyList(), pageable, 0);
+
+        // Mock the repository call
+        when(showTimeRepository.findShowTimesByDate(expectedStart, expectedEnd, pageable))
+                .thenReturn(mockPage);
+
+        // Act
+        Page<ShowTime> result = showTimeService.getShowTimesByDate(inputDate, pageable);
+
+        // Assert
+        assertNotNull(result);
+        assertTrue(result.isEmpty());
+
+        // Verify the repository was called with the correct offset-aware boundaries
+        verify(showTimeRepository, times(1))
+                .findShowTimesByDate(expectedStart, expectedEnd, pageable);
     }
 
     // --- updateShowTime Tests ---
@@ -233,7 +380,7 @@ class ShowTimeServiceTest {
 
         // No conflicts found, excluding the showtime itself (eq(1L))
         given(showTimeRepository.findConflictingShows(eq(2L), eq(newStartTime), eq(expectedNewEndTime), eq(showTimeId)))
-                .willReturn(Optional.empty());
+                .willReturn(List.of());
 
         given(showTimeRepository.save(any(ShowTime.class))).willReturn(testShowTime); // Return the mutated object
 
@@ -275,7 +422,7 @@ class ShowTimeServiceTest {
                 eq(testShowTime.getStartTime()),
                 eq(expectedEndTime),
                 eq(showTimeId)))
-                .willReturn(Optional.empty());
+                .willReturn(List.of());
 
         given(showTimeRepository.save(any(ShowTime.class))).willReturn(testShowTime);
 
@@ -318,11 +465,11 @@ class ShowTimeServiceTest {
         // Simulate finding a conflict, excluding the showtime being updated (ID 1)
         given(showTimeRepository.findConflictingShows(
                 eq(testTheater.getId()), eq(newStartTime), eq(newEndTime), eq(showTimeId)))
-                .willReturn(Optional.of(List.of(conflictingShow)));
+                .willReturn((List.of(conflictingShow)));
 
         // When & Then
-        TheatherNotAvaliableException exception = assertThrows(
-                TheatherNotAvaliableException.class,
+        TheaterNotAvaliableException exception = assertThrows(
+                TheaterNotAvaliableException.class,
                 () -> showTimeService.updateShowTime(showTimeId, updateRequestDto)
         );
 
