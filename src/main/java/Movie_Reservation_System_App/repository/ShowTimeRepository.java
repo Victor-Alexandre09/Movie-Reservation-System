@@ -24,7 +24,7 @@ public interface ShowTimeRepository extends JpaRepository<ShowTime, Long> {
                                         @Param("newEndTime") OffsetDateTime newEndTime,
                                         @Param("showTimeIdToExclude") Long showTimeIdToExclude);
 
-    @EntityGraph(attributePaths = {"movie", "theater"})
+    @EntityGraph(attributePaths = {"movie", "movie.genres",  "theater"})
     @Query("""
             SELECT s
             FROM ShowTime s
@@ -34,7 +34,7 @@ public interface ShowTimeRepository extends JpaRepository<ShowTime, Long> {
             """)
     Page<ShowTime> findFutureShowsByMovieId(@Param("movieId") Long movieId, Pageable pageble);
 
-    @EntityGraph(attributePaths = {"movie", "theater"})
+    @EntityGraph(attributePaths = {"movie", "movie.genres",  "theater"})
     @Query("""
             SELECT s
             FROM ShowTime s

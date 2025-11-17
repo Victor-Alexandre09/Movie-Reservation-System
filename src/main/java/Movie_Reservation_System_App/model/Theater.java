@@ -1,15 +1,17 @@
 package Movie_Reservation_System_App.model;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
-@Data
+import java.util.ArrayList;
+import java.util.List;
+
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "theater") // "theater" é o nome da tabela no seu diagrama
+@Table(name = "theater")
 public class Theater {
 
     @Id
@@ -19,6 +21,6 @@ public class Theater {
     @Column(name = "name", nullable = false)
     private String name;
 
-    @Column(name = "capacity", nullable = false)
-    private Integer capacity;
+    @OneToMany(mappedBy = "theater", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Seat> seats = new ArrayList<>();
 }

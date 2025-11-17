@@ -5,8 +5,6 @@ import jakarta.validation.constraints.NotNull;
 
 public record TheaterRequestDto(
         @NotBlank
-        String name,
-        @NotNull
-        Integer capacity
+        String name
 ) {
 }
