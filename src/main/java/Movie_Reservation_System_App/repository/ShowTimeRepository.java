@@ -10,6 +10,7 @@ import org.springframework.data.repository.query.Param;
 
 import java.time.OffsetDateTime;
 import java.util.List;
+import java.util.Optional;
 
 public interface ShowTimeRepository extends JpaRepository<ShowTime, Long> {
 
@@ -45,4 +46,7 @@ public interface ShowTimeRepository extends JpaRepository<ShowTime, Long> {
     Page<ShowTime> findShowTimesByDate(@Param("startOfDay") OffsetDateTime startOfDay,
                                        @Param("endOfDay") OffsetDateTime endOfDay,
                                        Pageable pageable);
+
+    @Query("SELECT s FROM ShowTime s JOIN FETCH s.theater WHERE s.id = :showTimeId")
+    Optional<ShowTime> findByIdJoinTheater(Long showTimeId);
 }

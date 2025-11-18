@@ -6,13 +6,16 @@ import Movie_Reservation_System_App.exception.DuplicatedRegisterException;
 import Movie_Reservation_System_App.model.Seat;
 import Movie_Reservation_System_App.model.Theater;
 import Movie_Reservation_System_App.repository.SeatRepository;
+import com.sun.jdi.request.DuplicateRequestException;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -76,5 +79,24 @@ public class SeatService {
                 () -> new EntityNotFoundException("seat not found for id " + seatId)
         );
         seatRepository.deleteById(seatId);
+    }
+
+    public List<Seat> foundSeatListByIdInTheater(List<Long> idList, Long theaterId) {
+        if (idList == null || idList.isEmpty()) {
+            return List.of();
+        }
+
+        Set<Long> uniqueIds = new HashSet<>(idList);
+
+        if (idList.size() > uniqueIds.size()) {
+            throw new DuplicateRequestException("the same seat ID was requested multiple times");
+        }
+
+        List<Seat> seatsFound = seatRepository.findAllByIdInAndTheaterId(uniqueIds, theaterId);
+
+        if (seatsFound.size() != uniqueIds.size()) {
+            throw new EntityNotFoundException("One or more of seat IDs were not found");
+        }
+        return seatsFound;
     }
 }

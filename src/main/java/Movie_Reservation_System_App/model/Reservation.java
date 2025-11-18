@@ -37,6 +37,6 @@ public class Reservation {
     @JoinColumn(name = "showtime_id", nullable = false)
     private ShowTime showTime;
 
-    @OneToMany(mappedBy = "reservation", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "reservation", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<ReservedSeat> reservedSeats = new ArrayList<>();
 }

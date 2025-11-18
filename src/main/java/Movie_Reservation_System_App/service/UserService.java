@@ -92,6 +92,12 @@ public class UserService {
         userRepository.delete(user);
     }
 
+    public User getUserByEmail(String email) {
+        return userRepository.findByEmail(email).orElseThrow(
+                () -> new EntityNotFoundException("user not found for id")
+        );
+    }
+
     private void validateNameAndEmail(String name, String email) {
         Map<String, String> validationErrors = new HashMap<>();
 

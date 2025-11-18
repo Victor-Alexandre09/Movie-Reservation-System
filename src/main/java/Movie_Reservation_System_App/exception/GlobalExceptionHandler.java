@@ -49,4 +49,14 @@ public class GlobalExceptionHandler {
     public ResponseEntity<String> handleTheaterNotAvaliableException(TheaterNotAvaliableException ex) {
         return ResponseEntity.status(HttpStatus.CONFLICT).body(ex.getMessage());
     }
+
+    @ExceptionHandler(ExceededMaxNumberOfSeatsReservation.class)
+    public ResponseEntity<String> handleExceededMaxNumberOfSeatsReservation(ExceededMaxNumberOfSeatsReservation ex) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
+    }
+
+    @ExceptionHandler(ShowTimeAlreadyStartedException.class)
+    public ResponseEntity<String> handleShowTimeAlreadyStartedException(ShowTimeAlreadyStartedException ex) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
+    }
 }

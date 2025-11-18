@@ -56,9 +56,15 @@ public class ShowTimeService {
         return showTimeRepository.save(showTime);
     }
 
+
     public ShowTime getShowTime(Long id) {
         return showTimeRepository.findById(id)
-                .orElseThrow( () -> new EntityNotFoundException("ShowTime not found by id: " + id));
+                .orElseThrow( () -> new EntityNotFoundException("ShowTime not found for id: " + id));
+    }
+
+    public ShowTime getShowTimeWithTheater(Long id) {
+        return showTimeRepository.findByIdJoinTheater(id)
+                .orElseThrow( () -> new EntityNotFoundException("ShowTime not found for id: " + id));
     }
 
     public Page<ShowTime> getShowTimeList(Pageable pageable) {

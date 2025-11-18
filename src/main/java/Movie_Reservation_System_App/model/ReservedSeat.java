@@ -19,11 +19,13 @@ public class ReservedSeat {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "seat_row", nullable = false, length = 10)
-    private String seatRow;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "seat_id", nullable = false)
+    private Seat seat;
 
-    @Column(name = "seat_number", nullable = false)
-    private Integer seatNumber;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "showtime_id", nullable = false)
+    private ShowTime showTime;
     
     @Column(name = "created_at", updatable = false, columnDefinition = "TIMESTAMP WITH TIME ZONE")
     private OffsetDateTime createdAt = OffsetDateTime.now();
