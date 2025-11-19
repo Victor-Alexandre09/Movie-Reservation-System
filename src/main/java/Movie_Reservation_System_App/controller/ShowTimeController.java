@@ -22,8 +22,8 @@ import java.time.OffsetDateTime;
 @RequestMapping("/show-times")
 public class ShowTimeController {
 
-    ShowTimeService showTimeService;
-    ShowTimeMapper showTimeMapper;
+    private final ShowTimeService showTimeService;
+    private final ShowTimeMapper showTimeMapper;
 
     public ShowTimeController(ShowTimeService showTimeService, ShowTimeMapper showTimeMapper) {
         this.showTimeService = showTimeService;

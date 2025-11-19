@@ -13,8 +13,8 @@ import java.util.List;
 @Service
 public class TheaterService {
 
-    TheaterRepository theaterRepository;
-    TheaterMapper theaterMapper;
+    private final TheaterRepository theaterRepository;
+    private final TheaterMapper theaterMapper;
 
     public TheaterService(TheaterRepository theaterRepository, TheaterMapper theaterMapper) {
         this.theaterRepository = theaterRepository;

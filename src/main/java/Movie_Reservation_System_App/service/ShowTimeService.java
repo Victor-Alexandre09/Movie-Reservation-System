@@ -2,13 +2,13 @@ package Movie_Reservation_System_App.service;
 
 import Movie_Reservation_System_App.dto.showTime.ShowTimeRequestDto;
 import Movie_Reservation_System_App.dto.showTime.ShowTimeUpdateRequestDto;
-import Movie_Reservation_System_App.exception.TheaterNotAvaliableException;
-import Movie_Reservation_System_App.mapper.ShowTimeMapper;
+import Movie_Reservation_System_App.exception.TheaterNotAvailableException;
 import Movie_Reservation_System_App.model.Movie;
 import Movie_Reservation_System_App.model.ShowTime;
 import Movie_Reservation_System_App.model.Theater;
 import Movie_Reservation_System_App.repository.ShowTimeRepository;
 import jakarta.persistence.EntityNotFoundException;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -22,19 +22,20 @@ import java.util.stream.Collectors;
 @Service
 public class ShowTimeService {
 
-    ShowTimeRepository showTimeRepository;
-    ShowTimeMapper showTimeMapper;
-    MovieService movieService;
-    TheaterService theaterService;
+    private final ShowTimeRepository showTimeRepository;
+    private final MovieService movieService;
+    private final TheaterService theaterService;
+    private final int timeIntervalBetweenSessionsInMinutes;
 
-    public ShowTimeService(ShowTimeRepository showTimeRepository, ShowTimeMapper showTimeMapper, MovieService movieService, TheaterService theaterService) {
+    public ShowTimeService(ShowTimeRepository showTimeRepository,
+                           MovieService movieService,
+                           TheaterService theaterService,
+                           @Value("${app.business.time-interval-between-sessions}") int timeIntervalBetweenSessionsInMinutes) {
         this.showTimeRepository = showTimeRepository;
-        this.showTimeMapper = showTimeMapper;
         this.movieService = movieService;
         this.theaterService = theaterService;
+        this.timeIntervalBetweenSessionsInMinutes = timeIntervalBetweenSessionsInMinutes;
     }
-
-    public final int TimeIntervalBetwenSessionsInMinutes = 30;
 
     @Transactional
     public ShowTime createShowTime(ShowTimeRequestDto showTimeDto) {
@@ -55,7 +56,6 @@ public class ShowTimeService {
 
         return showTimeRepository.save(showTime);
     }
-
 
     public ShowTime getShowTime(Long id) {
         return showTimeRepository.findById(id)
@@ -137,13 +137,13 @@ public class ShowTimeService {
                             s.getEndTime()))
                     .collect(Collectors.joining("\n"));
 
-            throw new TheaterNotAvaliableException(
+            throw new TheaterNotAvailableException(
                     "The new show time conflicts with existing show times:\n" + details);
         }
     }
 
     private OffsetDateTime getEndTimeOfShow(OffsetDateTime startTime, Integer movieDuration) {
-        return startTime.plusMinutes(movieDuration + TimeIntervalBetwenSessionsInMinutes);
+        return startTime.plusMinutes(movieDuration + timeIntervalBetweenSessionsInMinutes);
     }
 }
 

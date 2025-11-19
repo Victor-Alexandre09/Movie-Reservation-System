@@ -1,6 +1,7 @@
 package Movie_Reservation_System_App.exception;
 
 import jakarta.persistence.EntityNotFoundException;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
@@ -14,6 +15,17 @@ import java.util.Map;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
+
+    @ExceptionHandler(DataIntegrityViolationException.class)
+    public ResponseEntity<String> handleDataIntegrityViolation(DataIntegrityViolationException ex) {
+
+        if (ex.getMessage() != null && ex.getMessage().contains("unique_reservation_per_seat_and_showtime")) {
+            return ResponseEntity.status(HttpStatus.CONFLICT)
+                    .body("One or more selected seats are no longer available");
+        }
+
+        return ResponseEntity.status(HttpStatus.CONFLICT).body("data conflict");
+    }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<Map<String, String>> handleValidationExceptions(MethodArgumentNotValidException ex) {
@@ -45,8 +57,8 @@ public class GlobalExceptionHandler {
         return ex.getErrors();
     }
 
-    @ExceptionHandler(TheaterNotAvaliableException.class)
-    public ResponseEntity<String> handleTheaterNotAvaliableException(TheaterNotAvaliableException ex) {
+    @ExceptionHandler(TheaterNotAvailableException.class)
+    public ResponseEntity<String> handleTheaterNotAvailableException(TheaterNotAvailableException ex) {
         return ResponseEntity.status(HttpStatus.CONFLICT).body(ex.getMessage());
     }
 

@@ -12,7 +12,7 @@ import java.util.Set;
 @Service
 public class GenreService {
 
-    GenreRepository genreRepository;
+    private final GenreRepository genreRepository;
 
     public GenreService(GenreRepository genreRepository) {
         this.genreRepository = genreRepository;

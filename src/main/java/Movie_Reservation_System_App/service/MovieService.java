@@ -17,9 +17,9 @@ import java.util.Set;
 @Service
 public class MovieService {
 
-public MovieRepository movieRepository;
-public MovieMapper movieMapper;
-public GenreService genreService;
+    private final  MovieRepository movieRepository;
+    private final  MovieMapper movieMapper;
+    private final  GenreService genreService;
 
     public MovieService(MovieRepository movieRepository, MovieMapper movieMapper, GenreService genreService) {
         this.movieRepository = movieRepository;

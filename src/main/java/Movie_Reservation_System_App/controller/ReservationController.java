@@ -16,15 +16,14 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-import javax.naming.TimeLimitExceededException;
 import java.net.URI;
 
 @RestController
 @RequestMapping("reservation")
 public class ReservationController {
 
-    ReservationService reservationService;
-    ReservationMapper reservationMapper;
+    private final ReservationService reservationService;
+    private final ReservationMapper reservationMapper;
 
     public ReservationController(ReservationService reservationService, ReservationMapper reservationMapper) {
         this.reservationService = reservationService;
@@ -35,7 +34,7 @@ public class ReservationController {
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<ReservationResponseDto> createShowTime(
             @RequestBody @Validated ReservationRequestDto reservationRequestDto,
-            @AuthenticationPrincipal UserDetails userDetails) throws TimeLimitExceededException {
+            @AuthenticationPrincipal UserDetails userDetails) {
 
         String email = userDetails.getUsername();
 
@@ -48,6 +47,5 @@ public class ReservationController {
                 .toUri();
 
         return ResponseEntity.created(location).body(reservationMapper.toDTO(reservation));
-//        return ResponseEntity.ok().build();
     }
 }

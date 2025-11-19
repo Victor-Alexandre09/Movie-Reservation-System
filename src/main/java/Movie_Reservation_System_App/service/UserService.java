@@ -20,10 +20,10 @@ import java.util.Map;
 @Service
 public class UserService {
 
-    UserRepository userRepository;
-    UserMapper userMapper;
-    RoleService roleService;
-    PasswordEncoder passwordEncoder;
+    private final UserRepository userRepository;
+    private final UserMapper userMapper;
+    private final RoleService roleService;
+    private final PasswordEncoder passwordEncoder;
 
     public UserService(UserRepository userRepository, UserMapper userMapper,
                        RoleService roleService, PasswordEncoder passwordEncoder) {

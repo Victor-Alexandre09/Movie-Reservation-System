@@ -19,8 +19,8 @@ import java.util.List;
 @PreAuthorize("hasRole('ADMIN')")
 public class RoleController {
 
-    RoleService roleService;
-    RoleMapper roleMapper;
+    private final RoleService roleService;
+    private final RoleMapper roleMapper;
 
     public RoleController(RoleService roleService, RoleMapper roleMapper) {
         this.roleService = roleService;

@@ -18,8 +18,8 @@ import java.util.List;
 @RequestMapping("/genres")
 public class GenreController {
 
-    GenreService genreService;
-    GenreMapper genreMapper;
+    private final GenreService genreService;
+    private final GenreMapper genreMapper;
 
     public GenreController(GenreService genreService, GenreMapper genreMapper) {
         this.genreService = genreService;

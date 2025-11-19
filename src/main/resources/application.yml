@@ -20,3 +20,9 @@ spring:
           type:
             descriptor:
               sql: TRACE
+
+app:
+  security:
+    jwt-secret: hnvuioehf9p8zPOIFHj9843qkajZHF987kowerf398CWJ84XSNJC3
+  business:
+    time-interval-between-sessions: 30

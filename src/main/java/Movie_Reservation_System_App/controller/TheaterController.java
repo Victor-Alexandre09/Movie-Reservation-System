@@ -19,8 +19,8 @@ import java.util.List;
 @RequestMapping("/theaters")
 public class TheaterController {
 
-    TheaterService theaterService;
-    TheaterMapper theaterMapper;
+    private final TheaterService theaterService;
+    private final TheaterMapper theaterMapper;
 
     public TheaterController(TheaterService theaterService, TheaterMapper theaterMapper) {
         this.theaterService = theaterService;

@@ -3,6 +3,7 @@ package Movie_Reservation_System_App.security;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import javax.crypto.SecretKey;
@@ -11,10 +12,12 @@ import java.util.Date;
 @Service
 public class JwtService {
 
-    private final String SECRET = "hnvuioehf9p8zPOIFHj9843qkajZHF987kowerf398CWJ84XSNJC3";
-    private final SecretKey key = Keys.hmacShaKeyFor(SECRET.getBytes());
-
+    private final SecretKey key;
     private final int EXPIRATION_TIME_MS = (1000 * 60 * 60);
+
+    public JwtService(@Value("${app.security.jwt-secret}") String secret) {
+        this.key = Keys.hmacShaKeyFor(secret.getBytes());
+    }
 
     public String createJwt (String userEmail) {
         return Jwts.builder()

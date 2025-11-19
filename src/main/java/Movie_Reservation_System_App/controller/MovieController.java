@@ -18,8 +18,8 @@ import java.util.List;
 @RestController
 @RequestMapping("/movies")
 public class MovieController {
-    public MovieService movieService;
-    public MovieMapper movieMapper;
+    private final MovieService movieService;
+    private final MovieMapper movieMapper;
 
     public MovieController(MovieService movieService, MovieMapper movieMapper) {
         this.movieService = movieService;

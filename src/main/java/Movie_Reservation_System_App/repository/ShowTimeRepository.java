@@ -15,7 +15,8 @@ import java.util.Optional;
 public interface ShowTimeRepository extends JpaRepository<ShowTime, Long> {
 
     @Query("""
-            SELECT s FROM ShowTime s WHERE s.theater.id = :theaterId
+            SELECT s FROM ShowTime s
+            WHERE s.theater.id = :theaterId
             AND s.id != :showTimeIdToExclude
             AND s.startTime <= :newEndTime
             AND s.endTime >= :newStartTime

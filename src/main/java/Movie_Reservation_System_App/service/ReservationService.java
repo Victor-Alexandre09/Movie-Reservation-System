@@ -16,12 +16,12 @@ import java.util.List;
 @Service
 public class ReservationService {
 
-    ReservationRepository reservationRepository;
-    ReservationMapper reservationMapper;
-    ShowTimeService showTimeService;
-    ReservedSeatService reservedSeatService;
-    SeatService seatService;
-    UserService userService;
+    private final ReservationRepository reservationRepository;
+    private final ReservationMapper reservationMapper;
+    private final ShowTimeService showTimeService;
+    private final ReservedSeatService reservedSeatService;
+    private final SeatService seatService;
+    private final UserService userService;
 
     public ReservationService(ReservationRepository reservationRepository, ReservationMapper reservationMapper, ShowTimeService showTimeService, ReservedSeatService reservedSeatService, SeatService seatService, UserService userService) {
         this.reservationRepository = reservationRepository;
@@ -41,8 +41,7 @@ public class ReservationService {
 
         businessValidation(showTime, seatList);
 
-        seatList.forEach(seat ->
-                reservedSeatService.validateSeatsAvailability(showTime.getId(), seat.getId()));
+        reservedSeatService.validateSeatsAvailabilityWithLock(showTime.getId(), seatList);
 
         BigDecimal totalPrice = showTime.getPrice().multiply(BigDecimal.valueOf(seatList.size()));
 
@@ -50,8 +49,7 @@ public class ReservationService {
         reservation.setShowTime(showTime);
         reservation.setTotalPrice(totalPrice);
         reservation.setUser(user);
-        reservation.setStatus("CONFIRMED");
-
+        reservation.setStatus(ReservationStatus.CONFIRMED);
         reservationRepository.save(reservation);
 
         List<ReservedSeat> reservedSeatsToSave = seatList.stream()
@@ -66,6 +64,8 @@ public class ReservationService {
                 }).toList();
 
         reservedSeatService.saveAll(reservedSeatsToSave);
+
+        reservation.setReservedSeats(reservedSeatsToSave);
 
         return reservation;
     }
