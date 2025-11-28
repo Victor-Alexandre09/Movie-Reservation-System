@@ -1,6 +1,6 @@
 package Movie_Reservation_System_App.service;
 
-import Movie_Reservation_System_App.dto.reservation.ReservationRequestDto;
+import Movie_Reservation_System_App.dto.ReservationDTO;
 import Movie_Reservation_System_App.exception.ExceededMaxNumberOfSeatsReservation;
 import Movie_Reservation_System_App.exception.ShowTimeAlreadyStartedException;
 import Movie_Reservation_System_App.mapper.ReservationMapper;
@@ -23,7 +23,9 @@ public class ReservationService {
     private final SeatService seatService;
     private final UserService userService;
 
-    public ReservationService(ReservationRepository reservationRepository, ReservationMapper reservationMapper, ShowTimeService showTimeService, ReservedSeatService reservedSeatService, SeatService seatService, UserService userService) {
+    public ReservationService(ReservationRepository reservationRepository, ReservationMapper reservationMapper,
+            ShowTimeService showTimeService, ReservedSeatService reservedSeatService, SeatService seatService,
+            UserService userService) {
         this.reservationRepository = reservationRepository;
         this.reservationMapper = reservationMapper;
         this.showTimeService = showTimeService;
@@ -33,7 +35,7 @@ public class ReservationService {
     }
 
     @Transactional
-    public Reservation createReservation(ReservationRequestDto dto, String userEmail) {
+    public Reservation createReservation(ReservationDTO.Request dto, String userEmail) {
 
         User user = userService.getUserByEmail(userEmail);
         ShowTime showTime = showTimeService.getShowTimeWithTheater(dto.showTimeId());
@@ -70,9 +72,10 @@ public class ReservationService {
         return reservation;
     }
 
-    private void businessValidation(ShowTime showTime, List<Seat> seatList){
+    private void businessValidation(ShowTime showTime, List<Seat> seatList) {
         if (showTime.getStartTime().isBefore(OffsetDateTime.now())) {
-            throw new ShowTimeAlreadyStartedException("It is not possible to realize the reservation, the show time already started");
+            throw new ShowTimeAlreadyStartedException(
+                    "It is not possible to realize the reservation, the show time already started");
         }
         if (seatList.size() > 8) {
             throw new ExceededMaxNumberOfSeatsReservation("Can not reserve more than 8 seats");

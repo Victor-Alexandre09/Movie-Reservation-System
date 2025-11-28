@@ -1,7 +1,6 @@
 package Movie_Reservation_System_App.service;
 
-import Movie_Reservation_System_App.dto.showTime.ShowTimeRequestDto;
-import Movie_Reservation_System_App.dto.showTime.ShowTimeUpdateRequestDto;
+import Movie_Reservation_System_App.dto.ShowTimeDTO;
 import Movie_Reservation_System_App.exception.TheaterNotAvailableException;
 import Movie_Reservation_System_App.model.Movie;
 import Movie_Reservation_System_App.model.ShowTime;
@@ -28,9 +27,9 @@ public class ShowTimeService {
     private final int timeIntervalBetweenSessionsInMinutes;
 
     public ShowTimeService(ShowTimeRepository showTimeRepository,
-                           MovieService movieService,
-                           TheaterService theaterService,
-                           @Value("${app.business.time-interval-between-sessions}") int timeIntervalBetweenSessionsInMinutes) {
+            MovieService movieService,
+            TheaterService theaterService,
+            @Value("${app.business.time-interval-between-sessions}") int timeIntervalBetweenSessionsInMinutes) {
         this.showTimeRepository = showTimeRepository;
         this.movieService = movieService;
         this.theaterService = theaterService;
@@ -38,7 +37,7 @@ public class ShowTimeService {
     }
 
     @Transactional
-    public ShowTime createShowTime(ShowTimeRequestDto showTimeDto) {
+    public ShowTime createShowTime(ShowTimeDTO.Request showTimeDto) {
 
         Movie movie = movieService.getMovie(showTimeDto.movieId());
         Theater theater = theaterService.getTheater(showTimeDto.theaterId());
@@ -59,12 +58,12 @@ public class ShowTimeService {
 
     public ShowTime getShowTime(Long id) {
         return showTimeRepository.findById(id)
-                .orElseThrow( () -> new EntityNotFoundException("ShowTime not found for id: " + id));
+                .orElseThrow(() -> new EntityNotFoundException("ShowTime not found for id: " + id));
     }
 
     public ShowTime getShowTimeWithTheater(Long id) {
         return showTimeRepository.findByIdJoinTheater(id)
-                .orElseThrow( () -> new EntityNotFoundException("ShowTime not found for id: " + id));
+                .orElseThrow(() -> new EntityNotFoundException("ShowTime not found for id: " + id));
     }
 
     public Page<ShowTime> getShowTimeList(Pageable pageable) {
@@ -85,7 +84,7 @@ public class ShowTimeService {
     }
 
     @Transactional
-    public ShowTime updateShowTime(Long id, ShowTimeUpdateRequestDto updateRequestDto) {
+    public ShowTime updateShowTime(Long id, ShowTimeDTO.UpdateRequest updateRequestDto) {
         ShowTime show = getShowTime(id);
 
         if (updateRequestDto.movieId() != null) {
@@ -108,8 +107,7 @@ public class ShowTimeService {
                 show.getTheater().getId(),
                 show.getStartTime(),
                 show.getEndTime(),
-                show.getId()
-        );
+                show.getId());
 
         return showTimeRepository.save(show);
     }
@@ -118,14 +116,16 @@ public class ShowTimeService {
         showTimeRepository.delete(getShowTime(id));
     }
 
-    private void validateTheaterAvaliabilitiyForNewShow(Long theatherId, OffsetDateTime newShowStartTime, OffsetDateTime newShowEndTime) {
-        this.validateTheaterAvaliabilitiyForNewShow
-                (theatherId, newShowStartTime, newShowEndTime, 0L);
+    private void validateTheaterAvaliabilitiyForNewShow(Long theatherId, OffsetDateTime newShowStartTime,
+            OffsetDateTime newShowEndTime) {
+        this.validateTheaterAvaliabilitiyForNewShow(theatherId, newShowStartTime, newShowEndTime, 0L);
     }
 
-    private void validateTheaterAvaliabilitiyForNewShow(Long theatherId, OffsetDateTime newShowStartTime, OffsetDateTime newShowEndTime, Long showTimeIdToExclude) {
+    private void validateTheaterAvaliabilitiyForNewShow(Long theatherId, OffsetDateTime newShowStartTime,
+            OffsetDateTime newShowEndTime, Long showTimeIdToExclude) {
 
-        List<ShowTime> conflictingShows = showTimeRepository.findConflictingShows(theatherId, newShowStartTime, newShowEndTime, showTimeIdToExclude);
+        List<ShowTime> conflictingShows = showTimeRepository.findConflictingShows(theatherId, newShowStartTime,
+                newShowEndTime, showTimeIdToExclude);
 
         if (!conflictingShows.isEmpty()) {
             String details = conflictingShows
@@ -146,7 +146,3 @@ public class ShowTimeService {
         return startTime.plusMinutes(movieDuration + timeIntervalBetweenSessionsInMinutes);
     }
 }
-
-
-
-

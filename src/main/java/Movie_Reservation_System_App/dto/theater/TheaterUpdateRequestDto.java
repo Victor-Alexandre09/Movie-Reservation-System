@@ -1,6 +1,0 @@
-package Movie_Reservation_System_App.dto.theater;
-
-public record TheaterUpdateRequestDto(
-        String name
-) {
-}

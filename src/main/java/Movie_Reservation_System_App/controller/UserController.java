@@ -1,8 +1,6 @@
 package Movie_Reservation_System_App.controller;
 
-import Movie_Reservation_System_App.dto.user.UserRequestDto;
-import Movie_Reservation_System_App.dto.user.UserResponseDto;
-import Movie_Reservation_System_App.dto.user.UserUpdateRequestDto;
+import Movie_Reservation_System_App.dto.UserDTO;
 import Movie_Reservation_System_App.mapper.UserMapper;
 import Movie_Reservation_System_App.model.User;
 import Movie_Reservation_System_App.service.UserService;
@@ -29,7 +27,7 @@ public class UserController {
     }
 
     @PostMapping
-    public ResponseEntity<UserResponseDto> createUser(@RequestBody @Validated UserRequestDto userRequestDto) {
+    public ResponseEntity<UserDTO.Response> createUser(@RequestBody @Validated UserDTO.Request userRequestDto) {
 
         User user = userService.createUser(userRequestDto);
 
@@ -44,7 +42,7 @@ public class UserController {
 
     @GetMapping("/{id}")
     @PreAuthorize("principal.id == #id or hasRole('ADMIN')")
-    public ResponseEntity<UserResponseDto> getUser(@PathVariable Long id) {
+    public ResponseEntity<UserDTO.Response> getUser(@PathVariable Long id) {
         System.out.println(SecurityContextHolder.getContext().getAuthentication().getPrincipal());
         User user = userService.getUser(id);
         return ResponseEntity.ok().body(userMapper.toDTO(user));
@@ -52,15 +50,15 @@ public class UserController {
 
     @GetMapping
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<List<UserResponseDto>> getUsersList() {
+    public ResponseEntity<List<UserDTO.Response>> getUsersList() {
         List<User> users = userService.getUsersList();
         return ResponseEntity.ok().body(userMapper.toDtoList(users));
     }
 
     @PutMapping("/{id}")
     @PreAuthorize("principal.id == #id or hasRole('ADMIN')")
-    public ResponseEntity<UserResponseDto> updateUser(@PathVariable Long id,
-                                                      @RequestBody UserUpdateRequestDto userUpdateRequestDto) {
+    public ResponseEntity<UserDTO.Response> updateUser(@PathVariable Long id,
+            @RequestBody UserDTO.UpdateRequest userUpdateRequestDto) {
         User updatedUser = userService.updateUser(id, userUpdateRequestDto);
         return ResponseEntity.ok().body(userMapper.toDTO(updatedUser));
     }
@@ -71,4 +69,4 @@ public class UserController {
         userService.deleteUser(id);
         return ResponseEntity.noContent().build();
     }
- }
+}

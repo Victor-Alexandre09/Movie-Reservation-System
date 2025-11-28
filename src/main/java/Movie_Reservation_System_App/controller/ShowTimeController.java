@@ -1,8 +1,6 @@
 package Movie_Reservation_System_App.controller;
 
-import Movie_Reservation_System_App.dto.showTime.ShowTimeRequestDto;
-import Movie_Reservation_System_App.dto.showTime.ShowTimeResponseDto;
-import Movie_Reservation_System_App.dto.showTime.ShowTimeUpdateRequestDto;
+import Movie_Reservation_System_App.dto.ShowTimeDTO;
 import Movie_Reservation_System_App.mapper.ShowTimeMapper;
 import Movie_Reservation_System_App.model.ShowTime;
 import Movie_Reservation_System_App.service.ShowTimeService;
@@ -32,7 +30,8 @@ public class ShowTimeController {
 
     @PostMapping
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<ShowTimeResponseDto> createShowTime(@RequestBody @Validated ShowTimeRequestDto showTimeRequestDto) {
+    public ResponseEntity<ShowTimeDTO.Response> createShowTime(
+            @RequestBody @Validated ShowTimeDTO.Request showTimeRequestDto) {
         ShowTime createdShowTime = showTimeService.createShowTime(showTimeRequestDto);
 
         URI location = ServletUriComponentsBuilder
@@ -45,12 +44,12 @@ public class ShowTimeController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ShowTimeResponseDto> getShowTime(@PathVariable Long id) {
+    public ResponseEntity<ShowTimeDTO.Response> getShowTime(@PathVariable Long id) {
         return ResponseEntity.ok(showTimeMapper.toDTO(showTimeService.getShowTime(id)));
     }
 
     @GetMapping
-    public ResponseEntity<Page<ShowTimeResponseDto>> getShowTimeList(
+    public ResponseEntity<Page<ShowTimeDTO.Response>> getShowTimeList(
             @PageableDefault(size = 10, sort = "startTime") Pageable pageable) {
 
         Page<ShowTime> showTimePage = showTimeService.getShowTimeList(pageable);
@@ -58,7 +57,7 @@ public class ShowTimeController {
     }
 
     @GetMapping("/by-movie/{movieId}")
-    public ResponseEntity<Page<ShowTimeResponseDto>> getShowTimesByMovie(
+    public ResponseEntity<Page<ShowTimeDTO.Response>> getShowTimesByMovie(
             @PathVariable Long movieId,
             @PageableDefault(size = 10, sort = "startTime") Pageable pageable) {
 
@@ -67,7 +66,7 @@ public class ShowTimeController {
     }
 
     @GetMapping("/by-date")
-    public ResponseEntity<Page<ShowTimeResponseDto>> getShowTimesByDate(
+    public ResponseEntity<Page<ShowTimeDTO.Response>> getShowTimesByDate(
             @RequestParam OffsetDateTime date,
             @PageableDefault(size = 10, sort = "startTime") Pageable pageable) {
 
@@ -77,8 +76,8 @@ public class ShowTimeController {
 
     @PutMapping("{id}")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<ShowTimeResponseDto> updateShowTime(@PathVariable Long id,
-                                                              @RequestBody ShowTimeUpdateRequestDto updateRequestDto) {
+    public ResponseEntity<ShowTimeDTO.Response> updateShowTime(@PathVariable Long id,
+            @RequestBody ShowTimeDTO.UpdateRequest updateRequestDto) {
         ShowTime updatedShowTime = showTimeService.updateShowTime(id, updateRequestDto);
         return ResponseEntity.ok(showTimeMapper.toDTO(updatedShowTime));
     }

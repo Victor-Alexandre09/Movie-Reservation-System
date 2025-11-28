@@ -1,14 +1,9 @@
 package Movie_Reservation_System_App.mapper;
 
-import Movie_Reservation_System_App.dto.theater.TheaterUpdateRequestDto;
-import Movie_Reservation_System_App.dto.user.UserRequestDto;
-import Movie_Reservation_System_App.dto.user.UserResponseDto;
-import Movie_Reservation_System_App.model.Theater;
+import Movie_Reservation_System_App.dto.UserDTO;
 import Movie_Reservation_System_App.model.User;
-import org.mapstruct.BeanMapping;
 import org.mapstruct.Mapper;
-import org.mapstruct.MappingTarget;
-import org.mapstruct.NullValuePropertyMappingStrategy;
+import org.mapstruct.Mapping;
 import org.mapstruct.factory.Mappers;
 
 import java.util.List;
@@ -18,12 +13,13 @@ public interface UserMapper {
 
     UserMapper INSTANCE = Mappers.getMapper(UserMapper.class);
 
-    UserResponseDto toDTO(User user);
+    UserDTO.Response toDTO(User user);
 
-    List<UserResponseDto> toDtoList(List<User> users);
+    List<UserDTO.Response> toDtoList(List<User> users);
 
-    User toEntity(UserRequestDto dto);
-
-    @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
-    void updateTheaterFromDto(TheaterUpdateRequestDto dto, @MappingTarget Theater theater);
+    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "role", ignore = true)
+    @Mapping(target = "authorities", ignore = true)
+    @Mapping(target = "createdAt", ignore = true)
+    User toEntity(UserDTO.Request dto);
 }

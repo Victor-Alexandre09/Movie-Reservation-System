@@ -1,11 +1,12 @@
 package Movie_Reservation_System_App.controller;
 
-import Movie_Reservation_System_App.dto.theater.TheaterRequestDto;
-import Movie_Reservation_System_App.dto.theater.TheaterResponseDto;
-import Movie_Reservation_System_App.dto.theater.TheaterUpdateRequestDto;
+import Movie_Reservation_System_App.dto.TheaterDTO;
 import Movie_Reservation_System_App.mapper.TheaterMapper;
 import Movie_Reservation_System_App.model.Theater;
 import Movie_Reservation_System_App.service.TheaterService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
@@ -13,7 +14,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
-import java.util.List;
 
 @RestController
 @RequestMapping("/theaters")
@@ -29,9 +29,9 @@ public class TheaterController {
 
     @PostMapping
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<TheaterResponseDto> createTheater(@RequestBody @Validated TheaterRequestDto data) {
-        Theater theater = theaterMapper.toEntity(data);
-        Theater createdTheater = theaterService.createTheater(theater);
+    public ResponseEntity<TheaterDTO.Response> createTheater(
+            @RequestBody @Validated TheaterDTO.Request theaterRequestDto) {
+        Theater createdTheater = theaterService.createTheater(theaterRequestDto);
 
         URI location = ServletUriComponentsBuilder
                 .fromCurrentRequest()
@@ -43,22 +43,23 @@ public class TheaterController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<TheaterResponseDto> getTheater(@PathVariable Long id) {
-        Theater theater = theaterService.getTheater(id);
-        return ResponseEntity.ok(theaterMapper.toDTO(theater));
+    public ResponseEntity<TheaterDTO.Response> getTheater(@PathVariable Long id) {
+        return ResponseEntity.ok(theaterMapper.toDTO(theaterService.getTheater(id)));
     }
 
     @GetMapping
-    public ResponseEntity<List<TheaterResponseDto>> getTheaterList() {
-        return ResponseEntity.ok(theaterMapper.toDtoList(theaterService.getTheatersList()));
+    public ResponseEntity<Page<TheaterDTO.Response>> getTheaterList(
+            @PageableDefault(size = 10, sort = "name") Pageable pageable) {
+        Page<Theater> theaterPage = theaterService.getTheaterList(pageable);
+        return ResponseEntity.ok(theaterPage.map(theaterMapper::toDTO));
     }
 
     @PutMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<TheaterResponseDto> updateTheater(@RequestBody TheaterUpdateRequestDto data,
-                                                            @PathVariable Long id) {
-        Theater theater = theaterService.updateTheater(id, data);
-        return ResponseEntity.ok(theaterMapper.toDTO(theater));
+    public ResponseEntity<TheaterDTO.Response> updateTheater(@PathVariable Long id,
+            @RequestBody TheaterDTO.UpdateRequest theaterUpdateRequestDto) {
+        Theater updatedTheater = theaterService.updateTheater(id, theaterUpdateRequestDto);
+        return ResponseEntity.ok(theaterMapper.toDTO(updatedTheater));
     }
 
     @DeleteMapping("/{id}")

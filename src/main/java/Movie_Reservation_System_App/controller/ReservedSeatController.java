@@ -1,6 +1,6 @@
 package Movie_Reservation_System_App.controller;
 
-import Movie_Reservation_System_App.dto.reservedSeat.ReservedSeatResponseDto;
+import Movie_Reservation_System_App.dto.ReservedSeatDTO;
 import Movie_Reservation_System_App.mapper.ReservedSeatMapper;
 import Movie_Reservation_System_App.model.ReservedSeat;
 import Movie_Reservation_System_App.service.ReservedSeatService;
@@ -22,7 +22,7 @@ public class ReservedSeatController {
     }
 
     @GetMapping("show-time/{showTimeId}")
-    public ResponseEntity<List<ReservedSeatResponseDto>> getReservedSeatsByShowTimeId(@PathVariable Long showTimeId) {
+    public ResponseEntity<List<ReservedSeatDTO.Response>> getReservedSeatsByShowTimeId(@PathVariable Long showTimeId) {
         List<ReservedSeat> reservedSeatList = reservedSeatService.getReservedSeatIdsByShowTime(showTimeId);
         return ResponseEntity.ok(reservedSeatMapper.toDtoList(reservedSeatList));
     }

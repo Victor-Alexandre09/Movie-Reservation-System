@@ -1,21 +1,17 @@
 package Movie_Reservation_System_App.mapper;
 
-import Movie_Reservation_System_App.dto.reservation.ReservationRequestDto;
-import Movie_Reservation_System_App.dto.reservation.ReservationResponseDto;
+import Movie_Reservation_System_App.dto.ReservationDTO;
 import Movie_Reservation_System_App.model.Reservation;
 import org.mapstruct.Mapper;
-import org.mapstruct.factory.Mappers;
 
 import java.util.List;
 
-@Mapper(componentModel = "spring", uses = {ReservedSeatMapper.class})
+@Mapper(componentModel = "spring", uses = { ReservedSeatMapper.class, TheaterMapper.class })
 public interface ReservationMapper {
 
-    Reservation INSTANCE = Mappers.getMapper(Reservation.class);
+    ReservationDTO.Response toDTO(Reservation reservation);
 
-    ReservationResponseDto toDTO(Reservation reservation);
+    List<ReservationDTO.Response> toDtoList(List<Reservation> reservations);
 
-    List<ReservationResponseDto> toDtoList(List<Reservation> reservations);
-
-    Reservation toEntity(ReservationRequestDto dto);
+    Reservation toEntity(ReservationDTO.Request dto);
 }

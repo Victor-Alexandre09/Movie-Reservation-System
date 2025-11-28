@@ -1,11 +1,10 @@
 package Movie_Reservation_System_App.mapper;
 
-import Movie_Reservation_System_App.dto.showTime.ShowTimeRequestDto;
-import Movie_Reservation_System_App.dto.showTime.ShowTimeResponseDto;
-import Movie_Reservation_System_App.dto.showTime.ShowTimeUpdateRequestDto;
+import Movie_Reservation_System_App.dto.ShowTimeDTO;
 import Movie_Reservation_System_App.model.ShowTime;
 import org.mapstruct.BeanMapping;
 import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
 import org.mapstruct.NullValuePropertyMappingStrategy;
 import org.mapstruct.factory.Mappers;
@@ -17,12 +16,20 @@ public interface ShowTimeMapper {
 
     ShowTimeMapper INSTANCE = Mappers.getMapper(ShowTimeMapper.class);
 
-    ShowTimeResponseDto toDTO(ShowTime showTime);
+    ShowTimeDTO.Response toDTO(ShowTime showTime);
 
-    List<ShowTimeResponseDto> toDtoList(List<ShowTime> showTimes);
+    List<ShowTimeDTO.Response> toDtoList(List<ShowTime> showTimes);
 
-    ShowTime toEntity(ShowTimeRequestDto dto);
+    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "endTime", ignore = true)
+    @Mapping(target = "movie", ignore = true)
+    @Mapping(target = "theater", ignore = true)
+    ShowTime toEntity(ShowTimeDTO.Request dto);
 
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
-    void updateShowTimeFromDto(ShowTimeUpdateRequestDto dto, @MappingTarget ShowTime showTime);
+    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "endTime", ignore = true)
+    @Mapping(target = "movie", ignore = true)
+    @Mapping(target = "theater", ignore = true)
+    void updateShowTimeFromDto(ShowTimeDTO.UpdateRequest dto, @MappingTarget ShowTime showTime);
 }

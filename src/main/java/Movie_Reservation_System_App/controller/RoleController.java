@@ -1,7 +1,6 @@
 package Movie_Reservation_System_App.controller;
 
-import Movie_Reservation_System_App.dto.role.RoleRequestDto;
-import Movie_Reservation_System_App.dto.role.RoleResponseDto;
+import Movie_Reservation_System_App.dto.RoleDTO;
 import Movie_Reservation_System_App.mapper.RoleMapper;
 import Movie_Reservation_System_App.model.Role;
 import Movie_Reservation_System_App.service.RoleService;
@@ -28,7 +27,7 @@ public class RoleController {
     }
 
     @PostMapping
-    public ResponseEntity<RoleResponseDto> createRole(@RequestBody @Validated RoleRequestDto data) {
+    public ResponseEntity<RoleDTO.Response> createRole(@RequestBody @Validated RoleDTO.Request data) {
         Role role = roleMapper.toEntity(data);
         Role createdRole = roleService.createRole(role);
 
@@ -42,19 +41,19 @@ public class RoleController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<RoleResponseDto> getRole(@PathVariable Long id) {
+    public ResponseEntity<RoleDTO.Response> getRole(@PathVariable Long id) {
         Role role = roleService.getRole(id);
         return ResponseEntity.ok(roleMapper.toDTO(role));
     }
 
     @GetMapping
-    public ResponseEntity<List<RoleResponseDto>> getRoleList() {
+    public ResponseEntity<List<RoleDTO.Response>> getRoleList() {
         return ResponseEntity.ok(roleMapper.toDtoList(roleService.getRolesList()));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<RoleResponseDto> updateRole(@RequestBody @Validated RoleRequestDto data,
-                                                        @PathVariable Long id) {
+    public ResponseEntity<RoleDTO.Response> updateRole(@RequestBody @Validated RoleDTO.Request data,
+            @PathVariable Long id) {
         Role newRoleData = roleMapper.toEntity(data);
         var role = roleService.updateRole(id, newRoleData);
         return ResponseEntity.ok(roleMapper.toDTO(role));

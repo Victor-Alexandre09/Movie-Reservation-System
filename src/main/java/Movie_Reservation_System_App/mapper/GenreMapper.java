@@ -1,7 +1,6 @@
 package Movie_Reservation_System_App.mapper;
 
-import Movie_Reservation_System_App.dto.genre.GenreRequestDto;
-import Movie_Reservation_System_App.dto.genre.GenreResponseDto;
+import Movie_Reservation_System_App.dto.GenreDTO;
 import Movie_Reservation_System_App.model.Genre;
 import org.mapstruct.Mapper;
 import org.mapstruct.factory.Mappers;
@@ -13,9 +12,9 @@ public interface GenreMapper {
 
     GenreMapper INSTANCE = Mappers.getMapper(GenreMapper.class);
 
-    GenreResponseDto toDTO(Genre genre);
+    GenreDTO.Response toDTO(Genre genre);
 
-    List<GenreResponseDto> toDtoList(List<Genre> genres);
+    List<GenreDTO.Response> toDtoList(List<Genre> genres);
 
-    Genre toEntity(GenreRequestDto dto);
+    Genre toEntity(GenreDTO.Request dto);
 }

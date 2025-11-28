@@ -1,7 +1,6 @@
 package Movie_Reservation_System_App.service;
 
-import Movie_Reservation_System_App.dto.user.UserRequestDto;
-import Movie_Reservation_System_App.dto.user.UserUpdateRequestDto;
+import Movie_Reservation_System_App.dto.UserDTO;
 import Movie_Reservation_System_App.exception.ValidationException;
 import Movie_Reservation_System_App.mapper.UserMapper;
 import Movie_Reservation_System_App.model.Role;
@@ -26,7 +25,7 @@ public class UserService {
     private final PasswordEncoder passwordEncoder;
 
     public UserService(UserRepository userRepository, UserMapper userMapper,
-                       RoleService roleService, PasswordEncoder passwordEncoder) {
+            RoleService roleService, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
         this.userMapper = userMapper;
         this.roleService = roleService;
@@ -34,7 +33,7 @@ public class UserService {
     }
 
     @Transactional
-    public User createUser(UserRequestDto userRequestDto) {
+    public User createUser(UserDTO.Request userRequestDto) {
         validateNameAndEmail(userRequestDto.name(), userRequestDto.email());
 
         User user = userMapper.toEntity(userRequestDto);
@@ -47,8 +46,7 @@ public class UserService {
 
     public User getUser(Long id) {
         return userRepository.findById(id).orElseThrow(
-                () -> new EntityNotFoundException("user not found for id " + id)
-        );
+                () -> new EntityNotFoundException("user not found for id " + id));
     }
 
     public List<User> getUsersList() {
@@ -56,7 +54,7 @@ public class UserService {
     }
 
     @Transactional
-    public User updateUser(Long id, UserUpdateRequestDto newData) {
+    public User updateUser(Long id, UserDTO.UpdateRequest newData) {
         User userToUpdate = getUser(id);
         Map<String, String> validationErrors = new HashMap<>();
 
@@ -94,8 +92,7 @@ public class UserService {
 
     public User getUserByEmail(String email) {
         return userRepository.findByEmail(email).orElseThrow(
-                () -> new EntityNotFoundException("user not found for id")
-        );
+                () -> new EntityNotFoundException("user not found for id"));
     }
 
     private void validateNameAndEmail(String name, String email) {

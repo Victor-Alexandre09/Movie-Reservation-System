@@ -1,7 +1,6 @@
 package Movie_Reservation_System_App.controller;
 
-import Movie_Reservation_System_App.dto.genre.GenreRequestDto;
-import Movie_Reservation_System_App.dto.genre.GenreResponseDto;
+import Movie_Reservation_System_App.dto.GenreDTO;
 import Movie_Reservation_System_App.mapper.GenreMapper;
 import Movie_Reservation_System_App.model.Genre;
 import Movie_Reservation_System_App.service.GenreService;
@@ -28,7 +27,7 @@ public class GenreController {
 
     @PostMapping
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<GenreResponseDto> createGenre(@RequestBody @Validated GenreRequestDto data) {
+    public ResponseEntity<GenreDTO.Response> createGenre(@RequestBody @Validated GenreDTO.Request data) {
         Genre genre = genreMapper.toEntity(data);
         Genre createdGenre = genreService.createGenre(genre);
 
@@ -42,20 +41,20 @@ public class GenreController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<GenreResponseDto> getGenre(@PathVariable Long id) {
+    public ResponseEntity<GenreDTO.Response> getGenre(@PathVariable Long id) {
         Genre genre = genreService.getGenre(id);
         return ResponseEntity.ok(genreMapper.toDTO(genre));
     }
 
     @GetMapping
-    public ResponseEntity<List<GenreResponseDto>> getGenreList() {
+    public ResponseEntity<List<GenreDTO.Response>> getGenreList() {
         return ResponseEntity.ok(genreMapper.toDtoList(genreService.getGenresList()));
     }
 
     @PutMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<GenreResponseDto> updateGenre(@RequestBody @Validated GenreRequestDto data,
-                                                        @PathVariable Long id) {
+    public ResponseEntity<GenreDTO.Response> updateGenre(@RequestBody @Validated GenreDTO.Request data,
+            @PathVariable Long id) {
         Genre newGenreData = genreMapper.toEntity(data);
         var genre = genreService.updateGenre(id, newGenreData);
         return ResponseEntity.ok(genreMapper.toDTO(genre));

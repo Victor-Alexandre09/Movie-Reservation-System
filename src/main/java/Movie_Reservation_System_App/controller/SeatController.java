@@ -1,7 +1,6 @@
 package Movie_Reservation_System_App.controller;
 
-import Movie_Reservation_System_App.dto.seat.SeatRequestDto;
-import Movie_Reservation_System_App.dto.seat.SeatResponseDto;
+import Movie_Reservation_System_App.dto.SeatDTO;
 import Movie_Reservation_System_App.service.SeatService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
@@ -23,18 +22,18 @@ public class SeatController {
 
     @PostMapping
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<SeatResponseDto> createSeat(@RequestBody @Valid SeatRequestDto dto) {
+    public ResponseEntity<SeatDTO.Response> createSeat(@RequestBody @Valid SeatDTO.Request dto) {
         return ResponseEntity.status(HttpStatus.CREATED).body(seatService.createSeat(dto));
     }
 
     @PostMapping("/row-of-seats")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<List<SeatResponseDto>> createRowOfSeats(@RequestBody @Valid SeatRequestDto dto) {
+    public ResponseEntity<List<SeatDTO.Response>> createRowOfSeats(@RequestBody @Valid SeatDTO.Request dto) {
         return ResponseEntity.status(HttpStatus.CREATED).body(seatService.createRowOfSeats(dto));
     }
 
     @GetMapping("/theater/{theaterId}")
-    public ResponseEntity<List<SeatResponseDto>> getSeatsByTheater(@PathVariable Long theaterId) {
+    public ResponseEntity<List<SeatDTO.Response>> getSeatsByTheater(@PathVariable Long theaterId) {
         return ResponseEntity.ok(seatService.getSeatsByTheater(theaterId));
     }
 

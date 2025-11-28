@@ -1,7 +1,6 @@
 package Movie_Reservation_System_App.service;
 
-import Movie_Reservation_System_App.dto.seat.SeatRequestDto;
-import Movie_Reservation_System_App.dto.seat.SeatResponseDto;
+import Movie_Reservation_System_App.dto.SeatDTO;
 import Movie_Reservation_System_App.exception.DuplicatedRegisterException;
 import Movie_Reservation_System_App.model.Seat;
 import Movie_Reservation_System_App.model.Theater;
@@ -30,7 +29,7 @@ public class SeatService {
     }
 
     @Transactional
-    public SeatResponseDto createSeat(SeatRequestDto dto) {
+    public SeatDTO.Response createSeat(SeatDTO.Request dto) {
         Theater theater = theaterService.getTheater(dto.theaterId());
         String upperCaseRow = dto.row().toUpperCase();
 
@@ -47,18 +46,18 @@ public class SeatService {
 
         seatRepository.save(seat);
 
-        return new SeatResponseDto(seat.getId(), theater.getId(), seat.getRow(), seat.getNumber());
+        return new SeatDTO.Response(seat.getId(), theater.getId(), seat.getRow(), seat.getNumber());
     }
 
-    public List<SeatResponseDto> getSeatsByTheater(Long theaterId) {
+    public List<SeatDTO.Response> getSeatsByTheater(Long theaterId) {
         return seatRepository.findAllByTheaterId(theaterId).stream()
-                .map(s -> new SeatResponseDto(s.getId(), s.getTheater().getId(), s.getRow(), s.getNumber()))
+                .map(s -> new SeatDTO.Response(s.getId(), s.getTheater().getId(), s.getRow(), s.getNumber()))
                 .collect(Collectors.toList());
     }
 
     @Transactional
-    public List<SeatResponseDto> createRowOfSeats(@Valid SeatRequestDto dto) {
-        List<SeatResponseDto> seatsListResponse = new ArrayList<>();
+    public List<SeatDTO.Response> createRowOfSeats(@Valid SeatDTO.Request dto) {
+        List<SeatDTO.Response> seatsListResponse = new ArrayList<>();
 
         Long theaterId = dto.theaterId();
         String seatRow = dto.row().toUpperCase();
@@ -66,7 +65,7 @@ public class SeatService {
 
         for (int i = 0; i < numberOfSeats; i++) {
             int seatNumber = i + 1;
-            SeatRequestDto seatRequestDto = new SeatRequestDto(theaterId, seatRow, seatNumber);
+            SeatDTO.Request seatRequestDto = new SeatDTO.Request(theaterId, seatRow, seatNumber);
             seatsListResponse.add(createSeat(seatRequestDto));
         }
 
@@ -76,8 +75,7 @@ public class SeatService {
     @Transactional
     public void deleteSeat(Long seatId) {
         seatRepository.findById(seatId).orElseThrow(
-                () -> new EntityNotFoundException("seat not found for id " + seatId)
-        );
+                () -> new EntityNotFoundException("seat not found for id " + seatId));
         seatRepository.deleteById(seatId);
     }
 

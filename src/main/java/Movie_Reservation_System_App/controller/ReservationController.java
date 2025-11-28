@@ -1,7 +1,6 @@
 package Movie_Reservation_System_App.controller;
 
-import Movie_Reservation_System_App.dto.reservation.ReservationRequestDto;
-import Movie_Reservation_System_App.dto.reservation.ReservationResponseDto;
+import Movie_Reservation_System_App.dto.ReservationDTO;
 import Movie_Reservation_System_App.mapper.ReservationMapper;
 import Movie_Reservation_System_App.model.Reservation;
 import Movie_Reservation_System_App.service.ReservationService;
@@ -32,8 +31,8 @@ public class ReservationController {
 
     @PostMapping
     @PreAuthorize("isAuthenticated()")
-    public ResponseEntity<ReservationResponseDto> createShowTime(
-            @RequestBody @Validated ReservationRequestDto reservationRequestDto,
+    public ResponseEntity<ReservationDTO.Response> createShowTime(
+            @RequestBody @Validated ReservationDTO.Request reservationRequestDto,
             @AuthenticationPrincipal UserDetails userDetails) {
 
         String email = userDetails.getUsername();

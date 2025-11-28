@@ -1,8 +1,6 @@
 package Movie_Reservation_System_App.controller;
 
-import Movie_Reservation_System_App.dto.movie.MovieRequestDto;
-import Movie_Reservation_System_App.dto.movie.MovieResponseDto;
-import Movie_Reservation_System_App.dto.movie.MovieUpdateRequestDto;
+import Movie_Reservation_System_App.dto.MovieDTO;
 import Movie_Reservation_System_App.mapper.MovieMapper;
 import Movie_Reservation_System_App.model.Movie;
 import Movie_Reservation_System_App.service.MovieService;
@@ -28,8 +26,8 @@ public class MovieController {
 
     @PostMapping
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<MovieResponseDto> createMovie(@RequestBody @Validated MovieRequestDto movieRequestDto) {
-        Movie createdMovie = movieService.createMovie(movieRequestDto);
+    public ResponseEntity<MovieDTO.Response> createMovie(@RequestBody @Validated MovieDTO.Request data) {
+        Movie createdMovie = movieService.createMovie(data);
 
         URI location = ServletUriComponentsBuilder
                 .fromCurrentRequest()
@@ -41,22 +39,22 @@ public class MovieController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<MovieResponseDto> getMovie(@PathVariable Long id) {
+    public ResponseEntity<MovieDTO.Response> getMovie(@PathVariable Long id) {
         Movie movie = movieService.getMovie(id);
         return ResponseEntity.ok(movieMapper.toDTO(movie));
     }
 
     @GetMapping
-    public ResponseEntity<List<MovieResponseDto>> getMovieList() {
+    public ResponseEntity<List<MovieDTO.Response>> getMoviesList() {
         return ResponseEntity.ok(movieMapper.toDtoList(movieService.getMoviesList()));
     }
 
     @PutMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<MovieResponseDto> updateMovie(@RequestBody MovieUpdateRequestDto data,
-                                                            @PathVariable Long id) {
-        Movie updatedMovie = movieService.updateMovie(id, data);
-        return ResponseEntity.ok(movieMapper.toDTO(updatedMovie));
+    public ResponseEntity<MovieDTO.Response> updateMovie(@RequestBody @Validated MovieDTO.UpdateRequest data,
+            @PathVariable Long id) {
+        var movie = movieService.updateMovie(id, data);
+        return ResponseEntity.ok(movieMapper.toDTO(movie));
     }
 
     @DeleteMapping("/{id}")
